@@ -152,7 +152,6 @@ packer.startup({
     -- nightfox
     use { "EdenEast/nightfox.nvim", tag = "v1.0.0" }
     -------------------------------------------------------
-    use({ "akinsho/toggleterm.nvim" })
     -- surround
     use("ur4ltz/surround.nvim")
     -- Comment
@@ -169,6 +168,11 @@ packer.startup({
     use("rcarriga/nvim-dap-ui")
     -- use("Pocco81/DAPInstall.nvim")
     -- use("jbyuki/one-small-step-for-vimkind")
+    use("github/copilot.vim")
+    use {"akinsho/toggleterm.nvim", tag = 'v2.*', config = function()
+      require("toggleterm").setup()
+    end}
+    use("kdheepak/lazygit.nvim")
 
     use("j-hui/fidget.nvim")
     if paccker_bootstrap then
