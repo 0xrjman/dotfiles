@@ -18,6 +18,8 @@ local opt = {
 -- 本地变量
 local map = vim.api.nvim_set_keymap
 
+-- custom @ryan
+
 -- $跳到行尾不带空格 (交换$ 和 g_)
 map("v", "$", "g_", opt)
 map("v", "g_", "$", opt)
@@ -240,9 +242,9 @@ pluginKeys.mapLSP = function(mapbuf)
     mapbuf('n', 'gd', '<cmd>Lspsaga preview_definition<CR>', opt)
   mapbuf("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opt)
   --]]
-  mapbuf('n', 'gd', '<cmd>Lspsaga preview_definition<CR>', opt)
+  -- mapbuf('n', 'gd', '<cmd>Lspsaga preview_definition<CR>', opt)
   -- mapbuf("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opt)
-  -- mapbuf("n", "gd", "<cmd>lua require'telescope.builtin'.lsp_definitions({ initial_mode = 'normal', })<CR>", opt)
+  mapbuf("n", "gd", "<cmd>lua require'telescope.builtin'.lsp_definitions({ initial_mode = 'normal', })<CR>", opt)
   --[[
   mapbuf("n", "gh", "<cmd>Lspsaga hover_doc<cr>", opt)
   Lspsaga 替换 gh
@@ -253,7 +255,7 @@ pluginKeys.mapLSP = function(mapbuf)
   Lspsaga 替换 gr
   mapbuf("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", opt)
   --]]
-  -- mapbuf("n", "gr", "<cmd>Lspsaga lsp_finder<CR>", opt)
+  mapbuf("n", "gr", "<cmd>Lspsaga lsp_finder<CR>", opt)
   --[[
   Lspsaga 替换 gp, gj, gk
   mapbuf("n", "gp", "<cmd>lua vim.diagnostic.open_float()<CR>", opt)
@@ -262,8 +264,13 @@ pluginKeys.mapLSP = function(mapbuf)
   --]]
   -- diagnostic
   mapbuf("n", "gp", "<cmd>Lspsaga show_line_diagnostics<CR>", opt)
-  mapbuf("n", "gj", "<cmd>Lspsaga diagnostic_jump_next<cr>", opt)
-  mapbuf("n", "gk", "<cmd>Lspsaga diagnostic_jump_prev<cr>", opt)
+
+  -- mapbuf("n", "gp", "<cmd>lua vim.diagnostic.open_float()<CR>", opt)
+  mapbuf("n", "gj", "<cmd>lua vim.diagnostic.goto_next()<CR>", opt)
+  mapbuf("n", "gk", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opt)
+
+  -- mapbuf("n", "gj", "<cmd>Lspsaga diagnostic_jump_next<cr>", opt)
+  -- mapbuf("n", "gk", "<cmd>Lspsaga diagnostic_jump_prev<cr>", opt)
   mapbuf("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opt)
   -- 未用
   -- mapbuf("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opt)
