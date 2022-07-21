@@ -14,4 +14,3 @@
 
 -- 列表操作快捷键
 -- local list_keys = require("keybindings").vim-clap
-

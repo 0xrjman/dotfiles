@@ -1,5 +1,7 @@
 -- 基础配置
 require("basic")
+-- Neovide
+require("neovide")
 -- 快捷键映射
 require("keybindings")
 -- Packer插件管理

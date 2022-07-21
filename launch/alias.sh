@@ -6,9 +6,11 @@
 # alias v='nvim'
 # EOF
 
+echo "which command you want to replace?"
+read target
 while true
 do
-    echo 'which string to replace `nvim`? type `exit` to quit'
+    echo "which string to replace ${target}? type exit to quit"
     read name
     if [ $name == "exit" ]
     then
@@ -16,7 +18,7 @@ do
         echo 'exit'
         break
     fi
-    echo "alias ${name}='nvim'">>~/.zshrc
+    echo "alias ${name}=${target}">>~/.zshrc
 done
 
-echo "configurate nvim done"
+echo "configurate ${target} done"
