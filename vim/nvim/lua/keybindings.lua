@@ -105,6 +105,10 @@ map("n", "s=", "<C-w>=", opt)
 -- Terminal相关
 map("n", "st", ":sp | terminal<CR>", opt)
 map("n", "stv", ":vsp | terminal<CR>", opt)
+
+-- Insert 模式下回到Normal模式
+map("i", "jk", "<ESC>", { noremap = false })
+
 -- Esc 回 Normal 模式
 map("t", "<Esc>", "<C-\\><C-n>", opt)
 map("t", "<A-h>", [[ <C-\><C-N><C-w>h ]], opt)
