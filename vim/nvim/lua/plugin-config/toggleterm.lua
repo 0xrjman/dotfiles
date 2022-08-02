@@ -44,20 +44,69 @@ local lazygit = Terminal:new({
   end,
 })
 
-local ta = Terminal:new({
-  direction = "float",
-  close_on_exit = true,
-})
+local toggleMoveWindow = {
+  on_open = function(_)
+    vim.cmd("startinsert!")
+    if vim.fn.mapcheck("<leader>h", "t") ~= "" then
+      vim.api.nvim_del_keymap("t", "<leader>h")
+    end
+    if vim.fn.mapcheck("<leader>j", "t") ~= "" then
+      vim.api.nvim_del_keymap("t", "<leader>j")
+    end
+    if vim.fn.mapcheck("<leader>k", "t") ~= "" then
+      vim.api.nvim_del_keymap("t", "<leader>k")
+    end
+    if vim.fn.mapcheck("<leader>l", "t") ~= "" then
+      vim.api.nvim_del_keymap("t", "<leader>l")
+    end
+  end,
+  on_close = function(_)
+    local opt = {
+      noremap = true,
+      silent = true,
+    }
+    vim.api.nvim_set_keymap("t", "<leader>h", "<C-w>h", opt)
+    vim.api.nvim_set_keymap("t", "<leader>j", "<C-w>j", opt)
+    vim.api.nvim_set_keymap("t", "<leader>k", "<C-w>k", opt)
+    vim.api.nvim_set_keymap("t", "<leader>l", "<C-w>l", opt)
+  end,
+}
 
-local tb = Terminal:new({
-  direction = "vertical",
-  close_on_exit = true,
-})
+Mergetb = function(t1, t2)
+  for k,v in pairs(t2) do
+    if type(v) == "table" then
+      if type(t1[k] or false) == "table" then
+        Mergetb(t1[k] or {}, t2[k] or {})
+      else
+        t1[k] = v
+      end
+    else
+      t1[k] = v
+    end
+  end
+  return t1
+end
 
-local tc = Terminal:new({
-  direction = "horizontal",
-  close_on_exit = true,
-})
+local ta = Terminal:new(
+  Mergetb({
+    direction = "float",
+    close_on_exit = true,
+  }, toggleMoveWindow)
+)
+
+local tb = Terminal:new(
+  {
+    direction = "vertical",
+    close_on_exit = true,
+  }
+)
+
+local tc = Terminal:new(
+  {
+    direction = "horizontal",
+    close_on_exit = true,
+  }
+)
 
 local M = {}
 
