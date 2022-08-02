@@ -2,6 +2,8 @@
 require("basic")
 -- Neovide
 require("neovide")
+-- python
+require("python")
 -- 快捷键映射
 require("keybindings")
 -- Packer插件管理
@@ -24,6 +26,7 @@ require("plugin-config.toggleterm")
 -- require("plugin-config.surround")
 require("plugin-config.comment")
 require("plugin-config.nvim-autopairs")
+require("plugin-config.gitsigns")
 -- require("plugin-config.fidget")
 -- 内置LSP
 require("lsp.setup")

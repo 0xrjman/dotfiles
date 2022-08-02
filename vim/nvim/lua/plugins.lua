@@ -175,6 +175,10 @@ packer.startup({
     use("kdheepak/lazygit.nvim")
 
     use("j-hui/fidget.nvim")
+
+    -- custom @ryan
+    -- use {'neoclide/coc.nvim', branch = 'release'}
+    use("liuchengxu/vim-which-key")
     if paccker_bootstrap then
       packer.sync()
     end

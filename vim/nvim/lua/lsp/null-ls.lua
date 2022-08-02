@@ -31,6 +31,7 @@ null_ls.setup({
         "json",
         "yaml",
         "graphql",
+        "solidity",
       },
       prefer_local = "node_modules/.bin",
     }),
@@ -40,17 +41,17 @@ null_ls.setup({
     -- Python
     -- pip install black
     -- asdf reshim python
-    formatting.black.with({ extra_args = { "--fast" } }),
+    -- formatting.black.with({ extra_args = { "--fast" } }),
     -----------------------------------------------------
     -- Ruby
     -- gem install rubocop
-    formatting.rubocop,
+    -- formatting.rubocop,
     -----------------------------------------------------
     -- formatting.fixjson,
     -- Diagnostics  ---------------------
-    diagnostics.eslint.with({
-      prefer_local = "node_modules/.bin",
-    }),
+    -- diagnostics.eslint.with({
+    --   prefer_local = "node_modules/.bin",
+    -- }),
     -- diagnostics.markdownlint,
     -- markdownlint-cli2
     -- diagnostics.markdownlint.with({

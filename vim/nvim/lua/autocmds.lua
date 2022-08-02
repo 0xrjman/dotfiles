@@ -70,3 +70,6 @@ autocmd("BufEnter", {
       + "r" -- But do continue when pressing enter.
   end,
 })
+
+-- 自动预览Markdown
+vim.cmd('autocmd vimenter *.md exec ":MarkdownPreview"')
