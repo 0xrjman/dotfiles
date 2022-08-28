@@ -1,1 +1,0 @@
-ln -s $PWD/configs/git/.gitignore_global ~/.gitignore_global
