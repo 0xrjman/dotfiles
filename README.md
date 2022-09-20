@@ -1,10 +1,18 @@
 # dotfiles
 
-1. systems
+## Usage
 
-    - macintosh
-    - centOS
+Follow `Makefile`
 
-2. neovim
+    ```sh
+    ## Essential
+    make grant
 
-- ![neovim](https://fastly.jsdelivr.net/gh/rjman-ljm/resources@master/assets/16578368751791657836874364.png)
+    ## Optional
+    make launch-gitignore
+    make launch-nvim
+    make launch-yabai
+    make launch-skhd◊
+    ```
+
+<!-- - ![neovim](https://fastly.jsdelivr.net/gh/rjman-ljm/resources@master/assets/16578368751791657836874364.png) -->

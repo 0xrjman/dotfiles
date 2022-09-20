@@ -14,6 +14,12 @@ alias:
 	chmod +x ./launch/alias.sh
 	cd launch && ./alias.sh
 
+.PHONY: launch-gitignore
+launch-gitignore:
+	echo "Initialize your gitignore..."
+	chmod +x ./launch/configs/git/init.sh
+	./launch/configs/git/init.sh
+
 .PHONY: launch-nvim
 launch-nvim:
 	echo "Initialize your neovim..."
