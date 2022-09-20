@@ -17,5 +17,18 @@ alias:
 .PHONY: launch-nvim
 launch-nvim:
 	echo "Initialize your neovim..."
-	chmod +x ./launch/init-nvim.sh
-	cd launch && ./init-nvim.sh
+	chmod +x ./launch/configs/vim/init-nvim.sh
+	./launch/configs/vim/init-nvim.sh
+
+.PHONY: launch-yabai
+launch-yabai:
+	echo "Initialize your yabai..."
+	chmod +x ./launch/configs/yabai/init.sh
+	./launch/configs/yabai/init.sh
+
+.PHONY: launch-skhd
+launch-skhd:
+	echo "Initialize your skhd..."
+	chmod +x ./launch/configs/skhd/init.sh
+	./launch/configs/skhd/init.sh
+
