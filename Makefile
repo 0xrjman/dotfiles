@@ -20,6 +20,12 @@ launch-gitignore:
 	chmod +x ./launch/configs/git/init.sh
 	./launch/configs/git/init.sh
 
+.PHONY: launch-zsh
+launch-zsh:
+	echo "Initialize your zsh..."
+	chmod +x ./launch/configs/zsh/init.sh
+	./launch/configs/zsh/init.sh
+
 .PHONY: launch-nvim
 launch-nvim:
 	echo "Initialize your neovim..."

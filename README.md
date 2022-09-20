@@ -11,6 +11,7 @@ Follow `Makefile`
     ## Optional
     make alias
     make launch-gitignore
+    make zsh
     make launch-nvim
     make launch-yabai
     make launch-skhd◊
