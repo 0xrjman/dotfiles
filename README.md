@@ -9,6 +9,7 @@ Follow `Makefile`
     make grant
 
     ## Optional
+    make alias
     make launch-gitignore
     make launch-nvim
     make launch-yabai
