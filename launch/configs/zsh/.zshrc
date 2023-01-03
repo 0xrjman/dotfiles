@@ -201,11 +201,15 @@ function dev() {
     conda activate dev
 }
 
+function rjman() {
+    conda_on
+    conda activate rjman
+}
+
 function stable() {
     conda_on
     conda activate stable
 }
-
 function jump_server() {
     chmod 400 ~/.ssh/id_rsa.pem
 }
@@ -225,9 +229,10 @@ function temp_psql() {
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Java configuration
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-8.jdk/Contents/Home
-
+# export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-8.jdk/Contents/Home
 # export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home
+# export JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-19.jdk/Contents/Home
 
 export PATH="$PATH:/Users/rjman/.foundry/bin"
 alias vim='nvim'
@@ -235,6 +240,7 @@ alias vi='nvim'
 alias v='nvim'
 alias dk='docker'
 alias nv='neovide --multigrid --frame=none'
+alias pn='pnpm'
 alias git-cm='git commit -m'
 
 alias rm-node-modules='find . -name "node_modules" -type d -prune -exec rm -rf '{}' +'
@@ -252,7 +258,8 @@ function python_39() {
   export PKG_CONFIG_PATH="/opt/homebrew/opt/python/lib/pkgconfig"
 }
 export PATH="$PATH:/opt/homebrew/anaconda3/bin"
-export PYTHONPATH="/opt/homebrew/anaconda3/envs/stable/lib/python39.zip', '/opt/homebrew/anaconda3/envs/stable/lib/python3.9', '/opt/homebrew/anaconda3/envs/stable/lib/python3.9/lib-dynload', '/Users/rjman/.local/lib/python3.9/site-packages', '/opt/homebrew/anaconda3/envs/stable/lib/python3.9/site-packages"
+# export PYTHONPATH="/opt/homebrew/anaconda3/envs/stable/lib/python39.zip', '/opt/homebrew/anaconda3/envs/stable/lib/python3.9', '/opt/homebrew/anaconda3/envs/stable/lib/python3.9/lib-dynload', '/Users/rjman/.local/lib/python3.9/site-packages', '/opt/homebrew/anaconda3/envs/stable/lib/python3.9/site-packages"
+# export PYTHONPATH="/opt/homebrew/anaconda3/envs/rjman/lib/python39.zip', '/opt/homebrew/anaconda3/envs/rjman/lib/python3.9', '/opt/homebrew/anaconda3/envs/rjman/lib/python3.9/lib-dynload', '/Users/rjman/.local/lib/python3.9/site-packages', '/opt/homebrew/anaconda3/envs/rjman/lib/python3.9/site-packages"
 
 # alias python='python3'
 # alias py='python'
@@ -285,5 +292,17 @@ function launch_script() {
   ll ~/Workspace/Tool/dotfiles/launch/
   echo "~/Workspace/Tool/dotfiles/launch/"
 }
-alias ls='exa'
+# alias ls='exa'
+alias ls='lsd'
 
+export AI_RESOURCES="/Users/rjman/Workspace/AI/resources"
+
+function yabai_start() {
+  brew services start yabai
+  brew services start skhd
+}
+
+function yabai_stop() {
+  brew services stop yabai
+  brew services stop skhd
+}
