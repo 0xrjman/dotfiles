@@ -164,11 +164,6 @@ _G.packer_plugins = {
     path = "/Users/rjman/.local/share/nvim/site/pack/packer/start/lspsaga.nvim",
     url = "https://github.com/tami5/lspsaga.nvim"
   },
-  ["lua-dev.nvim"] = {
-    loaded = true,
-    path = "/Users/rjman/.local/share/nvim/site/pack/packer/start/lua-dev.nvim",
-    url = "https://github.com/folke/lua-dev.nvim"
-  },
   ["lualine-lsp-progress"] = {
     loaded = true,
     path = "/Users/rjman/.local/share/nvim/site/pack/packer/start/lualine-lsp-progress",
@@ -188,6 +183,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/rjman/.local/share/nvim/site/pack/packer/start/markdown-preview.nvim",
     url = "https://github.com/iamcco/markdown-preview.nvim"
+  },
+  ["neodev.nvim"] = {
+    loaded = true,
+    path = "/Users/rjman/.local/share/nvim/site/pack/packer/start/neodev.nvim",
+    url = "https://github.com/folke/neodev.nvim"
   },
   ["nightfox.nvim"] = {
     loaded = true,
@@ -334,6 +334,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/rjman/.local/share/nvim/site/pack/packer/start/vim-clap",
     url = "https://github.com/liuchengxu/vim-clap"
+  },
+  ["vim-conda"] = {
+    loaded = true,
+    path = "/Users/rjman/.local/share/nvim/site/pack/packer/start/vim-conda",
+    url = "https://github.com/cjrh/vim-conda"
   },
   ["vim-vsnip"] = {
     loaded = true,
