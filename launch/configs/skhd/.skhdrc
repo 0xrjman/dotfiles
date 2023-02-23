@@ -243,6 +243,8 @@ cmd + alt - w : yabai -m space --destroy
 # ================================ APPS ================================
 # iTerm2
 # cmd - return : open -a iTerm
+# Warp
+alt - space : open -a warp
 
 # ================================ Multiple monitors ================================
 # focus monitora :

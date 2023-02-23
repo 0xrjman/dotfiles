@@ -98,6 +98,7 @@ alias mount_mobile_rjman='~/Utils/disk/mount_mobile_rjman.sh'
 alias unmount_all='~/Utils/disk/unmount_all.sh'
 alias unmount_sandisk='~/Utils/disk/unmount_sandisk.sh'
 alias sandisk='mount_sandisk && mount_mobile_rjman && cd ~/Sandisk'
+alias matlab='/Applications/MATLAB_R2022b_Beta.app/bin/matlab -nodesktop'
 
 export PATH=$HOME/Applications/bin:$PATH
 source $ZSH/oh-my-zsh.sh
@@ -306,3 +307,6 @@ function yabai_stop() {
   brew services stop yabai
   brew services stop skhd
 }
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
