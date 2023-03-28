@@ -207,6 +207,11 @@ function rjman() {
     conda activate rjman
 }
 
+function ryan() {
+    conda_on
+    conda activate ryan
+}
+
 function stable() {
     conda_on
     conda activate stable
@@ -282,7 +287,7 @@ alias glg='git log'
 alias tlg='tig log'
 alias cl='clear'
 alias gck='git checkout'
-
+alias para-cli='npx @paraspace-liquidator/cmd@latest para-cli'
 # pnpm
 export PNPM_HOME="/Users/rjman/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
