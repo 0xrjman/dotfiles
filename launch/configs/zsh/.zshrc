@@ -101,6 +101,8 @@ alias sandisk='mount_sandisk && mount_mobile_rjman && cd ~/Sandisk'
 alias matlab='/Applications/MATLAB_R2022b_Beta.app/bin/matlab -nodesktop'
 
 export PATH=$HOME/Applications/bin:$PATH
+export PATH=$PATH:$(go env GOPATH)/bin
+export PATH=$PATH:$HOME/.local/bin
 source $ZSH/oh-my-zsh.sh
 export NVM_DIR="$HOME/.nvm"
 source $(brew --prefix nvm)/nvm.sh
