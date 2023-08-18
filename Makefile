@@ -44,3 +44,8 @@ launch-skhd:
 	chmod +x ./launch/configs/skhd/init.sh
 	./launch/configs/skhd/init.sh
 
+.PHONY: launch-zellij
+launch-zellij:
+	echo "Initialize your zellij..."
+	chmod +x ./launch/configs/zellij/init.sh
+	./launch/configs/zellij/init.sh
