@@ -43,9 +43,14 @@ launch-skhd:
 	echo "Initialize your skhd..."
 	chmod +x ./launch/configs/skhd/init.sh
 	./launch/configs/skhd/init.sh
-
 .PHONY: launch-zellij
 launch-zellij:
 	echo "Initialize your zellij..."
 	chmod +x ./launch/configs/zellij/init.sh
 	./launch/configs/zellij/init.sh
+
+.PHONY: launch-alacritty
+launch-alacritty:
+	echo "Initialize your alacritty..."
+	chmod +x ./launch/configs/alacritty/init.sh
+	./launch/configs/alacritty/init.sh
