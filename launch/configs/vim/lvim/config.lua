@@ -13,7 +13,7 @@ lvim.plugins =
       {"github/copilot.vim"},
       -- { "akinsho/toggleterm.nvim", version = "*", config = true }
       -- https://github.com/liuchengxu/vim-clap/blob/master/INSTALL.md
-      { "liuchengxu/vim-clap" }
+      --   { "liuchengxu/vim-clap" }
     }
 
 -- Keybinds
