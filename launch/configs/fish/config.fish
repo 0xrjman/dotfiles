@@ -1,3 +1,53 @@
+export PATH="/home/rjman/.local/bin:$PATH"
+
+function git_proxy_on
+  git config --global http.proxy http://127.0.0.1:7890
+  git config --global https.proxy https://127.0.0.1:7890
+  echo -e "set git proxy port 7890"
+end
+
+function git_proxy_off
+  git config --global --unset http.proxy
+  git config --global --unset https.proxy
+  echo -e "unset git proxy"
+end
+
+function proxy_on
+        export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
+        export http_proxy="http://127.0.0.1:7890"
+        export https_proxy=$http_proxy
+        export ftp_proxy=$http_proxy
+        export rsync_proxy=$http_proxy
+        export HTTP_PROXY=$http_proxy
+        export HTTPS_PROXY=$http_proxy
+        export FTP_PROXY=$http_proxy
+        export RSYNC_PROXY=$http_proxy
+        git_proxy_on
+        echo -e "已开启代理"
+        curl cip.cc
+end
+
+function proxy_off
+        set --erase http_proxy
+        set --erase https_proxy
+        set --erase ftp_proxy
+        set --erase rsync_proxy
+        git_proxy_off
+        echo -e "已关闭代理"
+        # curl cip.cc
+end
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+if test -f /home/rjman/miniconda3/bin/conda
+    eval /home/rjman/miniconda3/bin/conda "shell.fish" "hook" $argv | source
+end
+# <<< conda initialize <<<
+
+function ryan
+	conda activate ryan
+end
+
 if status is-interactive
     # Commands to run in interactive sessions can go here
 end
@@ -16,15 +66,13 @@ function fuck -d "Correct your previous console command"
   end
 end
 
-export FZF_DEFAULT_OPTS='--height 60% --layout=reverse --border --cycle --preview-window=wrap --marker="*"'
-
-fzf_configure_bindings --directory=\cF  \
-                       --history=\cR    \
-                       --git_log=\cL    \
-                       --processe=\cY   \
-                       --git_status=\cI \
-                       --variables=\cV
-
+# export FZF_DEFAULT_OPTS='--height 60% --layout=reverse --border --cycle --preview-window=wrap --marker="*"'
+# fzf_configure_bindings --directory=\cF  \
+#                        --history=\cR    \
+#                        --git_log=\cL    \
+#                        --processe=\cY   \
+#                        --git_status=\cI \
+#                        --variables=\cV
 # export PATH="$PATH:/Users/rjman/.bin"
 # export PATH="$PATH:/Users/rjman/.foundry/bin"
 # export PATH="$PATH:/opt/homebrew/anaconda3/bin"
@@ -37,30 +85,5 @@ fzf_configure_bindings --directory=\cF  \
 # export NVM_DIR="$HOME/.nvm"
 # export AI_RESOURCES="/Users/rjman/Workspace/AI/resources"
 # source $(brew --prefix nvm)/nvm.sh
-
-
-# echo
-# fortune
-# echo
-
-# function conda_on
-#     # >>> conda initialize >>>
-#     # !! Contents within this block are managed by 'conda init' !!
-#     set __conda_setup ("/opt/homebrew/anaconda3/bin/conda" "shell.fish" "hook" ^/dev/null)
-#     if test $status -eq 0
-#         eval "$__conda_setup"
-#     else if test -f "/opt/homebrew/anaconda3/etc/fish/conf.d/conda.fish"
-#         # source "/opt/homebrew/anaconda3/etc/fish/conf.d/conda.fish"  # commented out by conda initialize
-#     else
-#         # set -gx PATH "/opt/homebrew/anaconda3/bin" $PATH  # commented out by conda initialize
-#     end
-#     end
-#     set -e __conda_setup
-#     # <<< conda initialize <<<
-# end
-
-# function conda_off
-#     conda deactivate
-# end
 
 thefuck --alias | source
