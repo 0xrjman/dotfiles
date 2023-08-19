@@ -20,6 +20,16 @@ launch-gitignore:
 	chmod +x ./launch/configs/git/init.sh
 	./launch/configs/git/init.sh
 
+.PHONY: setup-scripts
+setup-scripts:
+	echo "setup custom scripts..."
+	ln -s -r scripts ~/.scripts
+
+.PHONY: lint-sctipts
+link-scripts:
+	echo "link scripts(notion) ..."
+	sudo ln -s ~/.scripts/app/launch_notion.sh /usr/bin/notion
+
 .PHONY: launch-zsh
 launch-zsh:
 	echo "Initialize your zsh..."
@@ -32,6 +42,12 @@ launch-nvim:
 	chmod +x ./launch/configs/vim/init-nvim.sh
 	./launch/configs/vim/init-nvim.sh
 
+.PHONY: launch-lvim
+launch-lvim:
+	echo "Initialize your lunarvim..."
+	chmod +x ./launch/configs/vim/init-lvim.sh
+	./launch/configs/vim/init-lvim.sh
+
 .PHONY: launch-yabai
 launch-yabai:
 	echo "Initialize your yabai..."
@@ -43,12 +59,12 @@ launch-skhd:
 	echo "Initialize your skhd..."
 	chmod +x ./launch/configs/skhd/init.sh
 	./launch/configs/skhd/init.sh
+
 .PHONY: launch-zellij
 launch-zellij:
 	echo "Initialize your zellij..."
 	chmod +x ./launch/configs/zellij/init.sh
 	./launch/configs/zellij/init.sh
-
 .PHONY: launch-alacritty
 launch-alacritty:
 	echo "Initialize your alacritty..."
