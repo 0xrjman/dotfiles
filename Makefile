@@ -54,3 +54,9 @@ launch-alacritty:
 	echo "Initialize your alacritty..."
 	chmod +x ./launch/configs/alacritty/init.sh
 	./launch/configs/alacritty/init.sh
+
+.PHONY: launch-fish
+launch-fish:
+	echo "Initialize your fish ..."
+	chmod +x ./launch/configs/fish/init.sh
+	./launch/configs/fish/init.sh
