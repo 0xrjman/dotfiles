@@ -58,7 +58,7 @@ font:
     style: Italic
 
   # 字大小
-  size: 16.0
+  size: 12.0
 
   offset:
     x: 0
@@ -108,3 +108,11 @@ key_bindings:
   - { key: Right, mods: Command, chars: "\x05" } # End
   - { key: Back, mods: Command, chars: "\x15" } # Delete line
   - { key: Back, mods: Alt, chars: "\x1b\x7f" } # Delete word
+
+shell:
+  program: /bin/fish
+  args:
+    # login
+    - -l
+    - -c
+    - 'zellij attach --index 0 --create'
