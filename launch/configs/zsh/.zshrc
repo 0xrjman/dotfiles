@@ -98,7 +98,7 @@ alias mount_mobile_rjman='~/Utils/disk/mount_mobile_rjman.sh'
 alias unmount_all='~/Utils/disk/unmount_all.sh'
 alias unmount_sandisk='~/Utils/disk/unmount_sandisk.sh'
 alias sandisk='mount_sandisk && mount_mobile_rjman && cd ~/Sandisk'
-alias matlab='/Applications/MATLAB_R2022b_Beta.app/bin/matlab -nodesktop'
+alias matlab='/Applications/MATLAB_R2023a.app/bin/matlab -nodesktop'
 
 export PATH=$HOME/Applications/bin:$PATH
 export PATH=$PATH:$(go env GOPATH)/bin
@@ -209,6 +209,16 @@ function rjman() {
     conda activate rjman
 }
 
+function llm() {
+    conda_on
+    conda activate llm
+}
+
+function sdwebui() {
+    conda_on
+    conda activate sdwebui
+}
+
 function ryan() {
     conda_on
     conda activate ryan
@@ -302,8 +312,8 @@ function launch_script() {
   ll ~/Workspace/Tool/dotfiles/launch/
   echo "~/Workspace/Tool/dotfiles/launch/"
 }
-# alias ls='exa'
-alias ls='lsd'
+alias ls='exa'
+# alias ls='lsd'
 
 export AI_RESOURCES="/Users/rjman/Workspace/AI/resources"
 
