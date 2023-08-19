@@ -17,7 +17,8 @@
 # echo "Hello World!"
 
 APP_NAME="Neovide"
-FRAME_ARG="--frame=transparent"
+# FRAME_ARG="--frame=transparent"
+FRAME_ARG="--frame=none"
 
 if pgrep -f "$APP_NAME" >/dev/null
 then
