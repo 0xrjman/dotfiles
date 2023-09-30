@@ -1,5 +1,11 @@
 export PATH="/home/rjman/.local/bin:$PATH"
 
+function switch_gcc
+  sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100 --slave /usr/bin/g++ g++ /usr/bin/g++-12 --slave /usr/bin/gcov gcov /usr/bin/gcov-12
+  sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 70 --slave /usr/bin/g++ g++ /usr/bin/g++-10 --slave /usr/bin/gcov gcov /usr/bin/gcov-10
+  sudo update-alternatives --config gcc
+end 
+
 function git_proxy_on
   git config --global http.proxy http://127.0.0.1:7890
   git config --global https.proxy https://127.0.0.1:7890
@@ -48,6 +54,10 @@ function ryan
 	conda activate ryan
 end
 
+function internimage
+	conda activate internimage
+end
+
 if status is-interactive
     # Commands to run in interactive sessions can go here
 end
@@ -89,3 +99,18 @@ end
 thefuck --alias | source
 
 set -U fish_key_bindings fish_vi_key_bindings
+
+# pnpm
+set -gx PNPM_HOME "/home/rjman/.local/share/pnpm"
+if not string match -q -- $PNPM_HOME $PATH
+  set -gx PATH "$PNPM_HOME" $PATH
+end
+# pnpm end
+
+# cuda
+set -gx CUDA_HOME_PATH "/usr/local/cuda-12.2/bin"
+if not string match -q -- $CUDA_HOME_PATH $PATH
+  set -gx PATH "$CUDA_HOME_PATH" $PATH
+  set -gx LD_LIBRARY_PATH "/usr/local/cuda-12.2/lib64" $LD_LIBRARY_PATH
+end
+# cuda end

@@ -42,7 +42,6 @@ colors:
       foreground: '#ffffff'
       background: '#9F7AF5'
 
-# 设置字体
 font:
   normal:
     family: 'SauceCodePro NerdFont Mono'
@@ -57,9 +56,7 @@ font:
     family: 'SauceCodePro NerdFont Mono'
     style: Italic
 
-  # 字大小
   size: 12.0
-
   offset:
     x: 0
     y: 9
@@ -69,11 +66,11 @@ font:
 
 window:
   padding:
-    x: 20
-    y: 22
-  decorations: Full
+    x: 10
+    y: 12
+  decorations: none
   dimensions:
-    columns: 106
+    columns: 520
     lines: 25
 
 scrolling:
@@ -97,7 +94,7 @@ live_config_reload: true
 
 key_bindings:
   - { key: R, mods: Command, mode: ~Vi|~Search, chars: "\x0c" }
-  - { key: R, mods: Command, mode: ~Vi|~Search, action: ClearHistory }
+  # - { key: R, mods: Command, mode: ~Vi|~Search, action: ClearHistory }
   - { key: W, mods: Command, action: Hide }
   - { key: W, mods: Command|Shift, action: Quit }
   - { key: N, mods: Command, action: SpawnNewInstance }

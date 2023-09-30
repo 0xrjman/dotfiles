@@ -1,5 +1,5 @@
 #!/bin/bash
-link_dir=~/Workspace/AI/resources
+link_dir=~/Documents/AI/resources
 
 while true
 do
