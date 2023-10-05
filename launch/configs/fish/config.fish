@@ -3,8 +3,9 @@ export PATH="/home/rjman/.local/bin:$PATH"
 function switch_gcc
   sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100 --slave /usr/bin/g++ g++ /usr/bin/g++-12 --slave /usr/bin/gcov gcov /usr/bin/gcov-12
   sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 70 --slave /usr/bin/g++ g++ /usr/bin/g++-10 --slave /usr/bin/gcov gcov /usr/bin/gcov-10
+  sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 50 --slave /usr/bin/g++ g++ /usr/bin/g++-8 --slave /usr/bin/gcov gcov /usr/bin/gcov-8
   sudo update-alternatives --config gcc
-end 
+end
 
 function git_proxy_on
   git config --global http.proxy http://127.0.0.1:7890
@@ -52,6 +53,18 @@ end
 
 function ryan
 	conda activate ryan
+end
+
+function ryanet
+	conda activate ryanet
+end
+
+function dcn
+	conda activate dcn
+end
+
+function edter
+	conda activate edter
 end
 
 function internimage
@@ -108,9 +121,25 @@ end
 # pnpm end
 
 # cuda
-set -gx CUDA_HOME_PATH "/usr/local/cuda-12.2/bin"
+set -gx CUDA_HOME "/usr/local/cuda"
+set -gx CUDA_HOME_PATH "/usr/local/cuda/bin"
 if not string match -q -- $CUDA_HOME_PATH $PATH
   set -gx PATH "$CUDA_HOME_PATH" $PATH
-  set -gx LD_LIBRARY_PATH "/usr/local/cuda-12.2/lib64" $LD_LIBRARY_PATH
+  set -gx LD_LIBRARY_PATH "/usr/local/cuda/lib64" $LD_LIBRARY_PATH
 end
 # cuda end
+
+function switch_cuda_10_1
+  sudo rm /usr/local/cuda
+  sudo ln -s /usr/local/cuda-10.1 /usr/local/cuda
+end
+
+function switch_cuda_11_7
+  sudo rm /usr/local/cuda
+  sudo ln -s /usr/local/cuda-11.7 /usr/local/cuda
+end
+
+function switch_cuda_12_2
+  sudo rm /usr/local/cuda
+  sudo ln -s /usr/local/cuda-12.2 /usr/local/cuda
+end
