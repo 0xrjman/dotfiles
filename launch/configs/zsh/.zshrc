@@ -209,6 +209,11 @@ function rjman() {
     conda activate rjman
 }
 
+function dcn() {
+    conda_on
+    conda activate dcn
+}
+
 function llm() {
     conda_on
     conda activate llm
