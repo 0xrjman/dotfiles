@@ -5,6 +5,7 @@
 # >>> ===================================== <<<
 # >>> ========== 0. General Start ========= <<<
 # >>> ===================================== <<<
+set -gx FISH_HOME /bin/fish
 set -x PATH $PATH $HOME/.local/bin
 set -U fish_key_bindings fish_vi_key_bindings
 
@@ -191,6 +192,7 @@ set -x PATH $HOME/Applications/bin $PATH
 set -x NVM_DIR $HOME/.nvm
 set -x JAVA_HOME /Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home
 set -x PATH $PATH (go env GOPATH)/bin
+set -gx FISH_HOME /opt/homebrew/bin/fish
 
 alias mount_sandisk='~/Utils/disk/mount_sandisk.sh'
 alias mount_mobile_rjman='~/Utils/disk/mount_mobile_rjman.sh'

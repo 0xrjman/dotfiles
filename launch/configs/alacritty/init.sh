@@ -1,9 +1,9 @@
 name="alacritty.yml"
 cur_dir=$(pwd)
 pre_dir=$(dirname $cur_dir)
-source_dir=$pre_dir/alacritty/alacritty.yml
-second_source_dir=$pre_dir/dotfiles/launch/configs/alacritty/alacritty.yml
-target_dir=~/.config/alacritty/alacritty.yml
+source_dir=$pre_dir/alacritty
+second_source_dir=$pre_dir/dotfiles/launch/configs/alacritty
+target_dir=~/.config/alacritty
 target_backup=$target_dir-backup
 
 if [ ! -e "$source_dir" ]; then

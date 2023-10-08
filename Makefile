@@ -65,6 +65,7 @@ launch-zellij:
 	echo "Initialize your zellij..."
 	chmod +x ./launch/configs/zellij/init.sh
 	./launch/configs/zellij/init.sh
+
 .PHONY: launch-alacritty
 launch-alacritty:
 	echo "Initialize your alacritty..."

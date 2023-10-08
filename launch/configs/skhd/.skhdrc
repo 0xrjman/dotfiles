@@ -244,7 +244,7 @@ cmd + alt - w : yabai -m space --destroy
 # iTerm2
 # cmd - return : open -a iTerm
 # Warp
-alt - space : ~/Workspace/Tool/dotfiles/launch/configs/raycast/neovide.sh
+# alt - space : ~/Workspace/Tool/dotfiles/launch/configs/raycast/neovide.sh
 # ================================ Multiple monitors ================================
 # focus monitora :
 # ctrl + alt - z  : yabai -m display --focus prev
