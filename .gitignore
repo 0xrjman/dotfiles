@@ -1,2 +1,5 @@
 **/.DS_Store
 .vscode
+
+# ignore soft-link files
+launch/configs/alacritty/alacritty.yml
