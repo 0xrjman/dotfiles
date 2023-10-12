@@ -28,6 +28,18 @@ else
   exit
 fi
 
+echo "System: $(uname)"
+if [ "$(uname)" == "Darwin" ]; then
+  echo "set $source_dir/alacritty-darwin.yml => $target_dir/alacritty.yml as your $name config..."
+  ln -s $source_dir/alacritty-darwin.yml $source_dir/alacritty.yml
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+  echo "set $source_dir/alacritty-linux.yml => $target_dir/alacritty.yml as your $name config..."
+  ln -s $source_dir/alacritty-linux.yml $source_dir/alacritty.yml
+else
+  echo "Your platform ($(uname -a)) is not supported."
+  exit
+fi
+
 echo "set $source_dir => $target_dir as your $name root dir..."
 ln -s $source_dir $target_dir
 

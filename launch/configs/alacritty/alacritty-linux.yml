@@ -1,6 +1,4 @@
-# Colors (Aura Theme)
 colors:
-  # Default colors
   primary:
     background: '#15141b'
     foreground: '#edecee'
@@ -12,7 +10,6 @@ colors:
     text: CellForeground
     background: '#29263c'
 
-  # Normal colors
   normal:
     black: '#110f18'
     red: '#ff6767'
@@ -23,7 +20,6 @@ colors:
     cyan: '#61ffca'
     white: '#edecee'
 
-  # Bright colors
   bright:
     black: '#4d4d4d'
     red: '#ff6767'
@@ -74,16 +70,13 @@ window:
     lines: 25
 
 scrolling:
-  # 回滚缓冲区中的最大行数,指定“0”将禁用滚动。
   history: 100000
-  # 滚动行数
   multiplier: 4
 
 cursor:
   style:
     shape: Beam
 
-# 如果为‘true’，则使用亮色变体绘制粗体文本。
 draw_bold_text_with_bright_colors: false
 
 selection:
