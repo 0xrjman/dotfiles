@@ -77,3 +77,10 @@ launch-fish:
 	echo "Initialize your fish ..."
 	chmod +x ./launch/configs/fish/init.sh
 	./launch/configs/fish/init.sh
+
+.PHONY: launch-cargo
+launch-cargo:
+	echo "Initialize your cargo ..."
+	chmod +x ./launch/configs/cargo/init.sh
+	./launch/configs/cargo/init.sh
+
