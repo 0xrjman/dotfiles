@@ -81,6 +81,12 @@ function proxy_off
         # curl cip.cc
 end
 
+function forward_port_to_local
+    if test -n "$argv[1]" -a -n "$argv[2]"
+        ssh -N -L (math $argv[3] -- $argv[2] localhost $argv[2]) $argv[1]
+    end
+end
+
 if status is-interactive
     # Commands to run in interactive sessions can go here
 end
@@ -185,6 +191,7 @@ else if uname | grep -qi "darwin"
 # echo "load fish config for Macintosh OS"
 
 set -x PATH $PATH $HOME/.bin
+set -x PATH $PATH $HOME/.cargo/bin
 set -x PATH $PATH /opt/homebrew/bin
 set -x PATH $PATH $HOME/.foundry/bin
 set -x PATH $PATH /opt/homebrew/anaconda3/bin
@@ -307,3 +314,4 @@ end
 end
 
 # echo "done"
+export PATH="$HOME/.fuelup/bin:$PATH"
