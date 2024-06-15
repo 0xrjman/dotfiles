@@ -84,3 +84,8 @@ launch-cargo:
 	chmod +x ./launch/configs/cargo/init.sh
 	./launch/configs/cargo/init.sh
 
+.PHONY: launch-sketchybar
+launch-sketchybar:
+	echo "Initialize your sketchybar ..."
+	chmod +x ./launch/configs/sketchybar/init.sh
+	./launch/configs/sketchybar/init.sh
