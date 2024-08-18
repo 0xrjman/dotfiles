@@ -46,14 +46,14 @@ text = "CellForeground"
 shape = "Beam"
 
 [font]
-size = 12.0
+size = 16.0
 
 [font.bold]
-family = "Monaco"
+family = "Hack Nerd Font Mono"
 style = "Regular"
 
 [font.bold_italic]
-family = "Monaco"
+family = "Hack Nerd Font Mono"
 style = "Italic"
 
 [font.glyph_offset]
@@ -61,11 +61,11 @@ x = 0
 y = 3
 
 [font.italic]
-family = "Monaco"
+family = "Hack Nerd Font Mono"
 style = "Italic"
 
 [font.normal]
-family = "Monaco"
+family = "Hack Nerd Font Mono"
 style = "Regular"
 
 [font.offset]
@@ -142,6 +142,7 @@ program = "/opt/homebrew/bin/fish"
 
 [window]
 decorations = "none"
+opacity = 0.95
 
 [window.dimensions]
 columns = 520

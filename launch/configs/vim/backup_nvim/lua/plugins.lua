@@ -177,6 +177,7 @@ packer.startup({
     use("j-hui/fidget.nvim")
 
     -- custom @ryan
+    use("theniceboy/joshuto.nvim")
     -- use {'neoclide/coc.nvim', branch = 'release'}
     use("liuchengxu/vim-which-key")
     if paccker_bootstrap then

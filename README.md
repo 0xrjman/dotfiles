@@ -4,17 +4,17 @@
 
 Follow `Makefile`
 
-    ```sh
-    ## Essential
-    make grant
+```sh
+## Essential
+make grant
 
-    ## Optional
-    make alias
-    make launch-gitignore
-    make zsh
-    make launch-nvim
-    make launch-yabai
-    make launch-skhd◊
-    ```
+## Optional
+make alias
+make launch-gitignore
+make zsh
+make launch-nvim
+make launch-yabai
+make launch-skhd
+```
 
 <!-- - ![neovim](https://fastly.jsdelivr.net/gh/rjman-ljm/resources@master/assets/16578368751791657836874364.png) -->

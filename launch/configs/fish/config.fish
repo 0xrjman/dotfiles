@@ -190,6 +190,12 @@ else if uname | grep -qi "darwin"
 # >>> ===================================== <<<
 # echo "load fish config for Macintosh OS"
 
+# set -x NVIM_APPNAME "${NVIM_APPNAME:-"lvim"}"
+set -x LUNARVIM_RUNTIME_DIR (set -q LUNARVIM_RUNTIME_DIR; or echo "$HOME/.local/share/lunarvim")
+set -x LUNARVIM_CONFIG_DIR (set -q LUNARVIM_CONFIG_DIR; or echo "$HOME/.config/lvim")
+set -x LUNARVIM_CACHE_DIR (set -q LUNARVIM_CACHE_DIR; or echo "$HOME/.cache/lvim")
+set -x LUNARVIM_BASE_DIR (set -q LUNARVIM_BASE_DIR; or echo "$HOME/.local/share/lunarvim/lvim")
+set -x nvm_default_version lts/iron
 set -x PATH $PATH $HOME/.bin
 set -x PATH $PATH $HOME/.cargo/bin
 set -x PATH $PATH /opt/homebrew/bin
@@ -233,14 +239,14 @@ function yabai_start
     yabai --start-service
     # outdated cmd: https://github.com/koekeishiya/yabai/blob/a8d62d65ca2f599ed6ed8f0d4831e4b41246baf5/CHANGELOG.md?plain=1#LL13C1-L13C1
     # brew services start yabai
-    # brew services start skhd
+    brew services start skhd
 end
 
 function yabai_stop
     yabai --stop-service
     # outdated cmd: https://github.com/koekeishiya/yabai/blob/a8d62d65ca2f599ed6ed8f0d4831e4b41246baf5/CHANGELOG.md?plain=1#LL13C1-L13C1
     # brew services stop yabai
-    # brew services stop skhd
+    brew services stop skhd
 end
 
 function temp_redis
@@ -268,6 +274,27 @@ end
 eval /opt/homebrew/anaconda3/bin/conda "shell.fish" "hook" $argv | source
 # <<< conda initialize <<<
 
+function conda_on
+    # >>> conda initialize >>>
+    # !! Contents within this block are managed by 'conda init' !!
+    set -l __conda_setup (conda 'shell.fish' 'hook' 2> /dev/null)
+    if test $status -eq 0
+        eval $__conda_setup
+    else
+        if test -f "/opt/homebrew/anaconda3/etc/profile.d/conda.sh"
+            # source "/opt/homebrew/anaconda3/etc/profile.d/conda.sh"  # commented out by conda initialize
+        else
+            # set -gx PATH "/opt/homebrew/anaconda3/bin" $PATH  # commented out by conda initialize
+        end
+    end
+    set -e __conda_setup
+    # <<< conda initialize <<<
+end
+
+function conda_off
+    conda deactivate
+end
+
 function cv
     conda_on
     conda activate cv
@@ -276,6 +303,11 @@ end
 function dev
     conda_on
     conda activate dev
+end
+
+function mineru
+    conda_on
+    conda activate mineru
 end
 
 function rjman
@@ -308,10 +340,14 @@ function stable
     conda activate stable
 end
 
+# CLI tool to take control of the Spotify client
+# custom spotify theme
+set -x PATH "$HOME/.fuelup/bin:$PATH"
+fish_add_path /Users/rjman/.spicetify
+
+pls
+# echo "done"
 # >>> ===================================== <<<
 # >>> ============= 2. Mac End ============ <<<
 # >>> ===================================== <<<
 end
-
-# echo "done"
-export PATH="$HOME/.fuelup/bin:$PATH"

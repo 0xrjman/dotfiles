@@ -1,6 +1,7 @@
 -- Neovide configuration
 -- Refer to https://github.com/neovide/neovide/wiki/Configuration
 -- local success, _ = pcall(require, 'neovide')
+vim.g.neovide_cursor_vfx_mode = 'railgun'
 vim.g.neovide_fullscreen=false
 vim.o.guifont='Hack Nerd Font'
 vim.g.neovide_transparency=0.7

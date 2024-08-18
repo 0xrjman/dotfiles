@@ -241,9 +241,13 @@ cmd + alt - w : yabai -m space --destroy
 # shift + cmd - 9 : yabai -m window --space  9; yabai -m space --focus 9
 
 # ================================ APPS ================================
-# iTerm2
-# cmd - return : open -a iTerm
-# Warp
+# cmd - return : open -a Arc 
+# cmd - space : open  -an 
+# ctrl + alt + cmd - space: toggle-alacritty # symlinked my toggle script to /opt/homebrew/bin
+alt - space: toggle-alacritty # symlinked my toggle script to /opt/homebrew/bin
+cmd - space: toggle-neovide # symlinked my toggle script to /opt/homebrew/bin
+# cmd - return : /Applications/Alacritty.app/Contents/MacOS/alacritty --single-instance -d ~
+
 # alt - space : ~/Workspace/Tool/dotfiles/launch/configs/raycast/neovide.sh
 # ================================ Multiple monitors ================================
 # focus monitora :

@@ -1,4 +1,4 @@
-vim.g.neovide_cursor_vfx_mode = 'railgun'
+
 -- utf8
 vim.g.encoding = "UTF-8"
 vim.o.fileencoding = "utf-8"
