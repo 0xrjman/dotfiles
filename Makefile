@@ -1,4 +1,3 @@
-
 .PHONY: grant
 grant:
 	echo "Grant all the scripts permissions..."
@@ -8,6 +7,7 @@ grant:
 
 .PHONY: init
 init: grant
+	chmod +x ./launch/common_init.sh
 
 .PHONY: alias
 alias:
@@ -25,7 +25,7 @@ setup-scripts:
 	echo "setup custom scripts..."
 	ln -s -r scripts ~/.scripts
 
-.PHONY: lint-sctipts
+.PHONY: link-scripts
 link-scripts:
 	echo "link scripts(notion) ..."
 	sudo ln -s ~/.scripts/app/launch_notion.sh /usr/bin/notion
@@ -33,9 +33,7 @@ link-scripts:
 .PHONY: launch-zsh
 launch-zsh:
 	echo "Initialize your zsh..."
-	chmod +x ./launch/configs/zsh/init.sh
-	./launch/configs/zsh/init.sh
-
+	./launch/common_init.sh zsh .zshrc ~
 .PHONY: launch-nvim
 launch-nvim:
 	echo "Initialize your neovim..."
@@ -51,41 +49,33 @@ launch-lvim:
 .PHONY: launch-yabai
 launch-yabai:
 	echo "Initialize your yabai..."
-	chmod +x ./launch/configs/yabai/init.sh
-	./launch/configs/yabai/init.sh
-
+	./launch/common_init.sh yabai .yabairc ~/.config/yabai
 .PHONY: launch-skhd
 launch-skhd:
 	echo "Initialize your skhd..."
-	chmod +x ./launch/configs/skhd/init.sh
-	./launch/configs/skhd/init.sh
-
+	./launch/common_init.sh skhd .skhdrc ~/.config/skhd
 .PHONY: launch-zellij
 launch-zellij:
 	echo "Initialize your zellij..."
-	chmod +x ./launch/configs/zellij/init.sh
-	./launch/configs/zellij/init.sh
-
+	./launch/common_init.sh zellij config.kdl ~/.config/zellij
 .PHONY: launch-alacritty
 launch-alacritty:
 	echo "Initialize your alacritty..."
-	chmod +x ./launch/configs/alacritty/init.sh
-	./launch/configs/alacritty/init.sh
-
+	./launch/common_init.sh alacritty alacritty.yml ~/.config/alacritty true
 .PHONY: launch-fish
 launch-fish:
 	echo "Initialize your fish ..."
-	chmod +x ./launch/configs/fish/init.sh
-	./launch/configs/fish/init.sh
-
+	./launch/common_init.sh fish config.fish ~/.config/fish
 .PHONY: launch-cargo
 launch-cargo:
 	echo "Initialize your cargo ..."
-	chmod +x ./launch/configs/cargo/init.sh
-	./launch/configs/cargo/init.sh
-
+	./launch/common_init.sh cargo config ~/.cargo
 .PHONY: launch-sketchybar
 launch-sketchybar:
 	echo "Initialize your sketchybar ..."
-	chmod +x ./launch/configs/sketchybar/init.sh
-	./launch/configs/sketchybar/init.sh
+	./launch/common_init.sh sketchybar sketchybarrc ~/.config/sketchybar
+
+.PHONY: launch-btop
+launch-btop:
+	echo "Initialize your btop ..."
+	./launch/common_init.sh btop btop.conf ~/.config/btop
