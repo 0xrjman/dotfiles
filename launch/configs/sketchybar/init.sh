@@ -1,3 +1,5 @@
+# Refer to https://github.com/GeorgeKiritsis/Dotfiles
+
 # echo "Installing Dependencies"
 # # Packages
 # brew install lua
