@@ -7,6 +7,9 @@
 # >>> ===================================== <<<
 set -gx FISH_HOME /bin/fish
 set -x PATH $PATH $HOME/.local/bin
+set -x PATH $PATH /opt/homebrew/Cellar/llvm/19.1.3/bin
+set -x PATH $PATH ~/.bun/bin
+
 set -U fish_key_bindings fish_vi_key_bindings
 
 alias ls "exa"
@@ -218,16 +221,13 @@ set -x PNPM_HOME $HOME/Library/pnpm
 set -x PATH $PNPM_HOME $PATH
 set -x AI_RESOURCES $HOME/Workspace/AI/resources
 
-thefuck --alias | source
+# https://docs.brew.sh/Shell-Completion
+if test -d (brew --prefix)"/share/fish/completions"
+    set -p fish_complete_path (brew --prefix)/share/fish/completions
+end
 
-function fuck -d "Correct your previous console command"
-  set -l fucked_up_command $history[1]
-  env TF_SHELL=fish TF_ALIAS=fuck PYTHONIOENCODING=utf-8 thefuck $fucked_up_command THEFUCK_ARGUMENT_PLACEHOLDER $argv | read -l unfucked_command
-  if [ "$unfucked_command" != "" ]
-    eval $unfucked_command
-    builtin history delete --exact --case-sensitive -- $fucked_up_command
-    builtin history merge
-  end
+if test -d (brew --prefix)"/share/fish/vendor_completions.d"
+    set -p fish_complete_path (brew --prefix)/share/fish/vendor_completions.d
 end
 
 function launch_script
@@ -338,6 +338,17 @@ end
 function stable
     conda_on
     conda activate stable
+end
+
+function forward-port-to-local
+    if test -n "$argv[1]" -a -n "$argv[2]"
+        if test -n "$argv[3]"
+            set port $argv[3]
+        else
+            set port $argv[2]
+        end
+        ssh -i ~/.ssh/ec2-default-apn1.pem -N -L $port:localhost:$argv[2] $argv[1]
+    end
 end
 
 # CLI tool to take control of the Spotify client
