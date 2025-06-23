@@ -137,6 +137,7 @@ automatically-unhide-macos-hidden-apps = false
     alt-r = 'workspace TEMP'
 
     alt-b = 'workspace HotWin'
+    cmd-space = 'exec-and-forget ~/.config/aerospace/nsp.sh org.alacritty Alacritty'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
     alt-shift-1 = 'move-node-to-workspace 1'
@@ -189,7 +190,8 @@ run = ['layout floating', 'move-node-to-workspace Admin']
 
 [[on-window-detected]] # org.alacritty
 if.app-id = 'org.alacritty'
-run = ['layout tiling', 'move-node-to-workspace HotWin']
+run = ['layout floating']
+# , 'move-node-to-workspace HotWin']
 
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes

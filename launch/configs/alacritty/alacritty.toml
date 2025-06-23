@@ -142,10 +142,17 @@ program = "/opt/homebrew/bin/fish"
 [window]
 decorations = "none"
 opacity = 0.95
+level = "AlwaysOnTop"
+# blur = true
+# startup_mode = "SimpleFullscreen"
+
+[window.position]
+x = 100
+# y = 200
 
 [window.dimensions]
-columns = 100
-lines = 25
+columns = 146
+lines = 38
 
 [window.padding]
 x = 10
