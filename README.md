@@ -1,20 +1,21 @@
-# dotfiles
+
+# 🚀 dotfiles
+
+My personal dev environment, supercharged with `make`.
+
+## Quick Start
+
+```sh
+make grant
+make install
+```
 
 ## Usage
 
-Follow `Makefile`
+Everything is managed via `Makefile`.
 
-```sh
-## Essential
-make grant
+- `make install`: Installs all configurations.
+- `make install-<app>`: Installs a specific app config (e.g., `make install-nvim`).
+- `make help`: Shows all available commands.
 
-## Optional
-make alias
-make launch-gitignore
-make zsh
-make launch-nvim
-make launch-yabai
-make launch-skhd
-```
-
-<!-- - ![neovim](https://fastly.jsdelivr.net/gh/rjman-ljm/resources@master/assets/16578368751791657836874364.png) -->
+Just dive into the `Makefile` for more details.
