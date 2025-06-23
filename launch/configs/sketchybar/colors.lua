@@ -8,14 +8,14 @@ return {
   orange = 0xfff39660,
   magenta = 0xffb39df3,
   grey = 0xff7f8490,
-  transparent = 0x00000000,
+  transparent = 0,
 
   bar = {
-    bg = 0xf02c2e34,
+    bg = 0x00000000,
     border = 0xff2c2e34,
   },
   popup = {
-    bg = 0xc02c2e34,
+    bg = 0x00000000,
     border = 0xff7f8490
   },
   bg1 = 0xff363944,

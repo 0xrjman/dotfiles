@@ -203,7 +203,7 @@ set -x PATH $PATH $HOME/.bin
 set -x PATH $PATH $HOME/.cargo/bin
 set -x PATH $PATH /opt/homebrew/bin
 set -x PATH $PATH $HOME/.foundry/bin
-set -x PATH $PATH /opt/homebrew/anaconda3/bin
+  # set -x PATH $PATH /opt/homebrew/anaconda3/bin
 set -x PATH $HOME/Applications/bin $PATH
 set -x NVM_DIR $HOME/.nvm
 set -x JAVA_HOME /Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home
@@ -271,7 +271,7 @@ end
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-eval /opt/homebrew/anaconda3/bin/conda "shell.fish" "hook" $argv | source
+  # eval /opt/homebrew/anaconda3/bin/conda "shell.fish" "hook" $argv | source
 # <<< conda initialize <<<
 
 function conda_on
@@ -356,7 +356,7 @@ end
 set -x PATH "$HOME/.fuelup/bin:$PATH"
 fish_add_path /Users/rjman/.spicetify
 
-pls
+# pls
 # echo "done"
 # >>> ===================================== <<<
 # >>> ============= 2. Mac End ============ <<<

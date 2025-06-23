@@ -1,0 +1,12 @@
+[manager]
+keymap = [
+	# ...
+]
+
+prepend_keymap = [
+	# ...
+]
+
+append_keymap = [
+	# ...
+]
