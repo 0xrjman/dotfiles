@@ -144,7 +144,7 @@ decorations = "none"
 opacity = 0.95
 
 [window.dimensions]
-columns = 520
+columns = 100
 lines = 25
 
 [window.padding]
