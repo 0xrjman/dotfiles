@@ -10,12 +10,12 @@ after-login-command = []
 # 'after-startup-command' is run after 'after-login-command'
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
 after-startup-command = [
-    'exec-and-forget sketchybar'
+    # 'exec-and-forget sketchybar'
 ]
 
 exec-on-workspace-change = [
-    '/bin/bash', '-c',
-    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
+    # '/bin/bash', '-c',
+    # 'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
 ]
 
 # Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
@@ -126,29 +126,25 @@ automatically-unhide-macos-hidden-apps = false
     alt-equal = 'resize smart +50'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
-    alt-1 = 'workspace 1'
+    alt-1 = 'workspace Tool'
     alt-2 = 'workspace Task'
-    alt-3 = 'workspace Chat'
-    alt-4 = 'workspace Video'
+    alt-3 = 'workspace Media'
 
-    alt-q = 'workspace Tool'
+    alt-q = 'workspace TEMP'
     alt-w = 'workspace Develop'
     alt-e = 'workspace Admin'
-    alt-r = 'workspace TEMP'
 
     alt-b = 'workspace HotWin'
-    cmd-space = 'exec-and-forget ~/.config/aerospace/nsp.sh org.alacritty Alacritty'
+    alt-space = 'exec-and-forget ~/.config/aerospace/nsp.sh org.alacritty Alacritty'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
-    alt-shift-1 = 'move-node-to-workspace 1'
+    alt-shift-1 = 'move-node-to-workspace Tool'
     alt-shift-2 = 'move-node-to-workspace Task'
-    alt-shift-3 = 'move-node-to-workspace Chat'
-    alt-shift-4 = 'move-node-to-workspace Video'
+    alt-shift-3 = 'move-node-to-workspace Media'
 
-    alt-shift-q = 'move-node-to-workspace Tool'
+    alt-shift-q = 'move-node-to-workspace TEMP'
     alt-shift-w = 'move-node-to-workspace Develop'
     alt-shift-e = 'move-node-to-workspace Admin'
-    alt-shift-r = 'move-node-to-workspace TEMP'
 
     alt-shift-b = 'move-node-to-workspace HotWin'
 
@@ -166,15 +162,15 @@ run = ['layout tiling', 'move-node-to-workspace Task']
 
 [[on-window-detected]] # com.tencent.xinWeChat
 if.app-id = 'com.tencent.xinWeChat'
-run = ['layout tiling', 'move-node-to-workspace Chat']
+run = ['layout tiling', 'move-node-to-workspace Media']
 
 [[on-window-detected]] # spotify
 if.app-id = 'com.spotify.client'
-run = ['layout tiling', 'move-node-to-workspace Video']
+run = ['layout tiling', 'move-node-to-workspace Media']
 
 [[on-window-detected]] # com.tencent.QQMusicMac
 if.app-id = 'com.tencent.QQMusicMac'
-run = ['layout tiling', 'move-node-to-workspace Video']
+run = ['layout tiling', 'move-node-to-workspace Media']
 
 [[on-window-detected]] # notion.id
 if.app-id = 'notion.id'

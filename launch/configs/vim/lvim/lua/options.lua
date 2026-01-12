@@ -26,7 +26,6 @@ lvim.builtin.breadcrumbs.active = true
 lvim.builtin.nvimtree.setup.actions.open_file.quit_on_open = true
 
 local options = {
-    shell = 'fish',
     incsearch = true,                        -- make search act like search in modern browsers
     backup = false,                          -- creates a backup file
     clipboard = "unnamedplus",               -- allows neovim to access the system clipboard

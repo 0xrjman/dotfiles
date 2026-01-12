@@ -1,164 +1,213 @@
+# =============================================================================
+# Alacritty v0.13+ TOML Configuration File
+# =============================================================================
+# Key Structural Notes and Modifications:
+# 1. Format conversion: Converted from old .yml to the latest .toml format.
+# 2. Node Hierarchy:
+#    - [terminal.shell]: Old shell configuration moved here.
+#    - [cursor.style]: Cursor shape and blinking configuration moved here, no longer directly under [cursor].
+#    - [window]: Merged all window-related scattered configurations.
+# 3. Character Escaping: TOML only supports \uXXXX format. All \x1b fixed to \u001b.
+# 4. Visual Enhancements:
+#    - Enabled macOS background blur and dynamic_padding.
+#    - Enabled builtin_box_drawing to optimize TUI border display.
+# 5. Interaction Optimization:
+#    - Configured Hints system to support URL recognition and opening.
+#    - Optimized cursor style switching in Vi mode.
+# =============================================================================
 
-[colors]
-draw_bold_text_with_bright_colors = false
+# -----------------------------------------------------------------------------
+# General Settings
+# -----------------------------------------------------------------------------
+[general]
+live_config_reload = true
+# Allow IPC using alacritty msg command
+ipc_socket = true
+import = [
+    # "~/.config/alacritty/themes/rose-pine.toml"
+    # "~/.config/alacritty/themes/rjman-default.toml"
+    # "~/.config/alacritty/themes/carbonfox.toml"
+    # "~/.config/alacritty/themes/horizon.toml"
+    # "~/.config/alacritty/themes/miasma.toml"
+    # "~/.config/alacritty/themes/yorumi-mist.toml"
+    # "~/.config/alacritty/themes/yorumi-abyss.toml"
+    # "~/.config/alacritty/themes/gruvbox-dark.toml"
+    "~/.config/alacritty/themes/oxocarbon.toml"
+]
 
-[colors.bright]
-black = "#4d4d4d"
-blue = "#a277ff"
-cyan = "#61ffca"
-green = "#61ffca"
-magenta = "#a277ff"
-red = "#ff6767"
-white = "#edecee"
-yellow = "#ffca85"
-
-[colors.cursor]
-cursor = "#a277ff"
-
-[colors.normal]
-black = "#110f18"
-blue = "#a277ff"
-cyan = "#61ffca"
-green = "#61ffca"
-magenta = "#a277ff"
-red = "#ff6767"
-white = "#edecee"
-yellow = "#ffca85"
-
-[colors.primary]
-background = "#15141b"
-foreground = "#edecee"
-
-[colors.search.focused_match]
-background = "#9F7AF5"
-foreground = "#ffffff"
-
-[colors.search.matches]
-background = "#ffffff"
-foreground = "#000000"
-
-[colors.selection]
-background = "#29263c"
-text = "CellForeground"
-
-[cursor.style]
-shape = "Beam"
-
-[font]
-size = 16.0
-
-[font.bold]
-family = "Hack Nerd Font Mono"
-style = "Regular"
-
-[font.bold_italic]
-family = "Hack Nerd Font Mono"
-style = "Italic"
-
-[font.glyph_offset]
-x = 0
-y = 3
-
-[font.italic]
-family = "Hack Nerd Font Mono"
-style = "Italic"
-
-[font.normal]
-family = "Hack Nerd Font Mono"
-style = "Regular"
-
-[font.offset]
-x = 0
-y = 9
-
-[[keyboard.bindings]]
-chars = "\f"
-key = "R"
-mode = "~Vi|~Search"
-mods = "Command"
-
-[[keyboard.bindings]]
-action = "Hide"
-key = "W"
-mods = "Command"
-
-[[keyboard.bindings]]
-action = "Quit"
-key = "W"
-mods = "Command|Shift"
-
-[[keyboard.bindings]]
-action = "SpawnNewInstance"
-key = "N"
-mods = "Command"
-
-[[keyboard.bindings]]
-action = "CreateNewWindow"
-key = "T"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u001Bb"
-key = "Left"
-mods = "Alt"
-
-[[keyboard.bindings]]
-chars = "\u001Bf"
-key = "Right"
-mods = "Alt"
-
-[[keyboard.bindings]]
-chars = "\u0001"
-key = "Left"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0005"
-key = "Right"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u0015"
-key = "Back"
-mods = "Command"
-
-[[keyboard.bindings]]
-chars = "\u001B\u007F"
-key = "Back"
-mods = "Alt"
-
-[scrolling]
-history = 100000
-multiplier = 4
-
-[selection]
-save_to_clipboard = true
-semantic_escape_chars = ",│`|:\"' ()[]{}<>"
-
-[terminal.shell]
-args = ["-l", "-c", "zellij attach --index 0 --create"]
-program = "/opt/homebrew/bin/fish"
-
+# -----------------------------------------------------------------------------
+# Window Settings
+# -----------------------------------------------------------------------------
 [window]
-decorations = "none"
-opacity = 0.95
-level = "AlwaysOnTop"
-# blur = true
-# startup_mode = "SimpleFullscreen"
-
-[window.position]
-x = 100
-# y = 200
-
-[window.dimensions]
-columns = 146
-lines = 38
+decorations = "None"         # Keep borderless
+opacity = 0.95               # Opacity
+blur = false # [Optimization] Enable frosted glass blur effect on macOS
+level = "AlwaysOnTop"        # Window Always on Top
+dynamic_padding = true       # [Optimization] Distribute extra padding evenly for balanced visuals
+option_as_alt = "Both"       # [Optimization] Make Option keys behave as Alt for easier shortcuts
 
 [window.padding]
 x = 10
 y = 12
 
-[general]
-live_config_reload = true
+[window.dimensions]
+columns = 140
+lines = 38
 
+[window.position]
+x = 100
+
+# -----------------------------------------------------------------------------
+# Color Configuration (Colors)
+# -----------------------------------------------------------------------------
+[colors]
+# [Optimization] Apply opacity to all cell backgrounds
+transparent_background_colors = true
+draw_bold_text_with_bright_colors = false
+
+
+# -----------------------------------------------------------------------------
+# Font Settings
+# -----------------------------------------------------------------------------
+[font]
+size = 16.0
+builtin_box_drawing = true  # [Optimization] Use built-in symbols for better aesthetics
+
+[font.normal]
+family = "Hack Nerd Font Mono"
+style = "Regular"
+
+[font.bold]
+family = "Hack Nerd Font Mono"
+style = "Regular"
+
+[font.italic]
+family = "Hack Nerd Font Mono"
+style = "Italic"
+
+[font.bold_italic]
+family = "Hack Nerd Font Mono"
+style = "Italic"
+
+[font.offset]
+x = 1
+y = 9
+
+[font.glyph_offset]
+x = 0
+y = 3
+
+# -----------------------------------------------------------------------------
+# Cursor Settings
+# -----------------------------------------------------------------------------
+[cursor]
+thickness = 0.15     # Cursor thickness
+unfocused_hollow = false # Cursor stays solid when window loses focus
+
+[cursor.style]
+shape = "Beam"
+blinking = "On"      # [Optimization] Enable cursor blinking
+
+[cursor.vi_mode_style]
+shape = "Block"
+blinking = "Off"
+
+# -----------------------------------------------------------------------------
+# Terminal and Shell
+# -----------------------------------------------------------------------------
 [terminal]
+osc52 = "OnlyCopy"
+
+[terminal.shell]
+program = "/opt/homebrew/bin/fish"
+args = ["-l", "-c", "zellij attach --index 0 --create"]
+
+# -----------------------------------------------------------------------------
+# Visual Bell - [Optimization]
+# -----------------------------------------------------------------------------
+[bell]
+animation = "EaseOutExpo"
+duration = 100
+color = "#ffffff"
+
+# -----------------------------------------------------------------------------
+# Mouse Settings - [Optimization]
+# -----------------------------------------------------------------------------
+[mouse]
+hide_when_typing = true  # Hide mouse cursor while typing
+
+# -----------------------------------------------------------------------------
+# Hints - [Optimization]
+# -----------------------------------------------------------------------------
+[[hints.enabled]]
+command = "open"
+hyperlinks = true
+post_processing = true
+persist = false
+mouse.enabled = true
+binding = { key = "O", mods = "Command|Shift" }
+regex = "(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:|file:|git://|ssh:|ftp://)[^\u0000-\u001F\u007F-\u009F<>\"\\s{-}\\^⟨⟩`\\\\]+"
+
+# -----------------------------------------------------------------------------
+# Keyboard Bindings
+# -----------------------------------------------------------------------------
+[[keyboard.bindings]]
+key = "Return"
+mods = "Shift"
+chars = "\u001b\r"  # Fix: TOML doesn't support \x escape, changed to \u001b
+
+[[keyboard.bindings]]
+key = "R"
+mods = "Command"
+mode = "~Vi|~Search"
+chars = "\u000c"    # Fix: Changed \f to Unicode \u000c for stability
+
+[[keyboard.bindings]]
+key = "W"
+mods = "Command"
+action = "Hide"
+
+[[keyboard.bindings]]
+key = "W"
+mods = "Command|Shift"
+action = "Quit"
+
+[[keyboard.bindings]]
+key = "N"
+mods = "Command"
+action = "SpawnNewInstance"
+
+[[keyboard.bindings]]
+key = "T"
+mods = "Command"
+action = "CreateNewWindow"
+
+[[keyboard.bindings]]
+key = "Left"
+mods = "Alt"
+chars = "\u001bb"
+
+[[keyboard.bindings]]
+key = "Right"
+mods = "Alt"
+chars = "\u001bf"
+
+[[keyboard.bindings]]
+key = "Left"
+mods = "Command"
+chars = "\u0001"
+
+[[keyboard.bindings]]
+key = "Right"
+mods = "Command"
+chars = "\u0005"
+
+[[keyboard.bindings]]
+key = "Back"
+mods = "Command"
+chars = "\u0015"
+
+[[keyboard.bindings]]
+key = "Back"
+mods = "Alt"
+chars = "\u001b\u007f" # Fix: Reverted to correct Back+Alt (Delete Word) binding

@@ -3,3 +3,36 @@
 -- Load the sketchybar-package and prepare the helper binaries
 require("helpers")
 require("init")
+
+-- -- Add aerospace workspace event
+-- sbar.add("event", "aerospace_workspace_change")
+
+-- -- Add aerospace workspace items
+-- -- The command to list all workspaces
+-- local workspaces_cmd = "aerospace list-workspaces --all"
+
+-- -- Iterate over workspaces and create sketchybar items
+-- for sid in io.popen(workspaces_cmd):lines() do
+--   -- Trim whitespace from sid
+--   sid = sid:match("^%s*(.-)%s*$")
+
+--   if sid and sid ~= "" then
+--     local space_item = sbar.add("item", "space." .. sid, {
+--       position = "left",
+--       label = {
+--         string = sid,
+--       },
+--       click_script = "aerospace workspace " .. sid,
+--       script = "$CONFIG_DIR/plugins/aerospace.sh " .. sid,
+--       background = {
+--         color = 0x44ffffff,
+--         corner_radius = 5,
+--         height = 20,
+--         drawing = false,
+--       },
+--     })
+
+--     -- When aerospace_workspace_change is triggered, the item's script will be executed.
+--     space_item:subscribe("aerospace_workspace_change")
+--   end
+-- end

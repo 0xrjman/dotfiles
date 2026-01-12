@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-
-# Issue: https://github.com/nikitabobko/AeroSpace/issues/510
+# https://github.com/nikitabobko/aerospace/issues/510
 
 set -euo pipefail
 

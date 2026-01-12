@@ -24,8 +24,15 @@ lvim.colorscheme = "oxocarbon"
 vim.o.mouse = "a"
 
 -- Plugins
+
+-- vim.g.deprecation_warnings = false
+vim.deprecate = function() end
+
 lvim.plugins = plugins.set
 
+lvim.builtin.terminal.active = true -- Terminal
+lvim.builtin.terminal.shell = "/opt/homebrew/bin/fish"
+-- lvim.keys.normal_mode["<C-t>"] = "<cmd>ToggleTerm<cr>"
 lvim.builtin.telescope.defaults.file_ignore_patterns = {
     ".git/",
     "target/",
