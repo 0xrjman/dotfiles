@@ -1,5 +1,0 @@
-# Launch
-
-## AI
-
-## neovim

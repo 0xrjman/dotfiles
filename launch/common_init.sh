@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# filepath: /Users/rjman/Workspace/Tool/dotfiles/launch/common_init.sh.en
 
 set -euo pipefail
 
@@ -22,7 +21,7 @@ target_backup="${target_dir}-backup"
 echo "Initializing $name configuration..."
 
 if [[ ! -d "$config_dir" ]]; then
-  echo "❌! Error: Configuration directory $config_dir does not exist, please check"
+  echo "Error: Configuration directory $config_dir does not exist, please check"
   exit 1
 fi
 
@@ -31,7 +30,7 @@ echo "Configuration source directory $config_dir exists"
 if [[ -e "$target_dir" ]]; then
   echo "$target_dir already exists, attempting to create backup"
   if [[ -e "$target_backup" ]]; then
-    echo "❌! Error: You already have a backup configuration at $target_backup, please check"
+    echo "Error: You already have a backup configuration at $target_backup, please check"
     exit 1
   else
     echo "Your original configuration has been moved to $target_backup"
@@ -52,7 +51,7 @@ if [[ "$os_specific" == "true" ]]; then
     ln -sf "$config_dir/${name}-linux.yml" "$config_dir/${name}.yml"
     ;;
   *)
-    echo "❌! Error: Your platform ($os_type) is not supported."
+    echo "Error: Your platform ($os_type) is not supported."
     exit 1
     ;;
   esac
@@ -63,4 +62,4 @@ mkdir -p "$(dirname "$target_dir")"
 echo "Setting $config_dir => $target_dir as your $name root directory..."
 ln -sf "$config_dir" "$target_dir"
 
-echo "^_^ Done! ✅"
+echo "Done."

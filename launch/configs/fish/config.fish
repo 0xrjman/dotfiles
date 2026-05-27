@@ -354,7 +354,7 @@ end
 # CLI tool to take control of the Spotify client
 # custom spotify theme
 set -x PATH "$HOME/.fuelup/bin:$PATH"
-fish_add_path /Users/rjman/.spicetify
+fish_add_path $HOME/.spicetify
 
 # pls
 # echo "done"
@@ -368,4 +368,4 @@ end
 source ~/.orbstack/shell/init2.fish 2>/dev/null || :
 
 # Added by Windsurf
-fish_add_path /Users/rjman/.codeium/windsurf/bin
+fish_add_path $HOME/.codeium/windsurf/bin

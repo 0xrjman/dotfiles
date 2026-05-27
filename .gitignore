@@ -1,5 +1,17 @@
-**/.DS_Store
-.vscode
+# OS
+.DS_Store
+.Trashes
+*.swp
+*.swo
+*~
 
-# ignore soft-link files
+# IDE
+.vscode/
+.idea/
+
+# Symlinks (already linked configs)
 launch/configs/alacritty/alacritty.yml
+
+# Backups
+*-backup/
+*-bk/

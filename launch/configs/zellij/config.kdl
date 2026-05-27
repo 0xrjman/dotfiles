@@ -211,7 +211,7 @@ mouse_mode true
 auto_layout true
 copy_on_select true
 scroll_buffer_size 50000
-scrollback_editor "/Users/rjman/.local/bin/lvim"
+scrollback_editor "$HOME/.local/bin/lvim"
 
 // layout_dir "~/.config/zellij/layouts"
 // theme_dir "/path/to/my/theme_dir"

@@ -9,7 +9,7 @@ fi
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/Users/rjman/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -94,10 +94,10 @@ HIST_STAMPS="yyyy-mm-dd"
 alias cp="cp -i"
 alias nvd="neovide"
 alias mount_sandisk='~/Utils/disk/mount_sandisk.sh'
-alias mount_mobile_rjman='~/Utils/disk/mount_mobile_rjman.sh'
+# alias mount_mobile_rjman='~/Utils/disk/mount_mobile_rjman.sh'  # personal
 alias unmount_all='~/Utils/disk/unmount_all.sh'
 alias unmount_sandisk='~/Utils/disk/unmount_sandisk.sh'
-alias sandisk='mount_sandisk && mount_mobile_rjman && cd ~/Sandisk'
+# alias sandisk='mount_sandisk && mount_mobile_rjman && cd ~/Sandisk'  # personal
 alias matlab='/Applications/MATLAB_R2023a.app/bin/matlab -nodesktop'
 
 export PATH=$HOME/Applications/bin:$PATH
@@ -204,10 +204,10 @@ function dev() {
     conda activate dev
 }
 
-function rjman() {
-    conda_on
-    conda activate rjman
-}
+# function rjman() {
+#     conda_on
+#     conda activate rjman
+# }
 
 function dcn() {
     conda_on
@@ -258,8 +258,8 @@ function temp_psql() {
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home
 # export JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-19.jdk/Contents/Home
 
-export PATH="$PATH:/Users/rjman/.bin"
-export PATH="$PATH:/Users/rjman/.foundry/bin"
+export PATH="$PATH:$HOME/.bin"
+export PATH="$PATH:$HOME/.foundry/bin"
 alias vim='nvim'
 alias vi='nvim'
 alias v='nvim'
@@ -308,7 +308,7 @@ alias cl='clear'
 alias gck='git checkout'
 alias para-cli='npx @paraspace-liquidator/cmd@latest para-cli'
 # pnpm
-export PNPM_HOME="/Users/rjman/Library/pnpm"
+export PNPM_HOME="$HOME/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
 
@@ -320,7 +320,7 @@ function launch_script() {
 alias ls='exa'
 # alias ls='lsd'
 
-export AI_RESOURCES="/Users/rjman/Workspace/AI/resources"
+export AI_RESOURCES="$HOME/Workspace/AI/resources"
 
 function yabai_start() {
   yabai --start-service
@@ -464,8 +464,9 @@ fi
 eval "$(zoxide init zsh)"
 
 # bun completions
-[ -s "/Users/rjman/.bun/_bun" ] && source "/Users/rjman/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+export PATH="$HOME/Miniforge3/bin:$PATH"
