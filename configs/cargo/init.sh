@@ -1,9 +1,8 @@
-name="lunarvim"
+name="config"
 cur_dir=$(pwd)
 pre_dir=$(dirname $cur_dir)
-source_dir=$pre_dir/vim/lvim
-second_source_dir=$pre_dir/dotfiles/launch/configs/vim/lvim
-target_dir=~/.config/lvim
+source_dir=$pre_dir/cargo/config
+target_dir=~/.cargo/config
 target_backup=$target_dir-backup
 
 if [ ! -e "$source_dir" ]; then

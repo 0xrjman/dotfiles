@@ -15,7 +15,7 @@ target_dir="${3:-$HOME/.config/$name}"
 os_specific="${4:-false}"
 
 script_dir=$(dirname "$(realpath "$0")")
-config_dir="$script_dir/configs/$name"
+config_dir="$(dirname "$script_dir")/configs/$name"
 target_backup="${target_dir}-backup"
 
 echo "Initializing $name configuration..."

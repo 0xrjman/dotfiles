@@ -1,9 +1,8 @@
-name="config.fish"
+name="alacritty.yml"
 cur_dir=$(pwd)
 pre_dir=$(dirname $cur_dir)
-source_dir=$pre_dir/fish/config.fish
-second_source_dir=$pre_dir/dotfiles/launch/configs/fish/config.fish
-target_dir=~/.config/fish/config.fish
+source_dir=$pre_dir/alacritty
+target_dir=~/.config/alacritty
 target_backup=$target_dir-backup
 
 if [ ! -e "$source_dir" ]; then
@@ -25,6 +24,18 @@ if [ -e "$source_dir" ]; then
   fi
 else
   echo "source $source_dir not exists, please check"
+  exit
+fi
+
+echo "System: $(uname)"
+if [ "$(uname)" == "Darwin" ]; then
+  echo "set $source_dir/alacritty-darwin.yml => $target_dir/alacritty.yml as your $name config..."
+  ln -s $source_dir/alacritty-darwin.yml $source_dir/alacritty.yml
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+  echo "set $source_dir/alacritty-linux.yml => $target_dir/alacritty.yml as your $name config..."
+  ln -s $source_dir/alacritty-linux.yml $source_dir/alacritty.yml
+else
+  echo "Your platform ($(uname -a)) is not supported."
   exit
 fi
 

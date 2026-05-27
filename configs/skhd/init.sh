@@ -1,11 +1,10 @@
-name="config"
+name=".skhdrc"
 cur_dir=$(pwd)
 pre_dir=$(dirname $cur_dir)
-source_dir=$pre_dir/cargo/config
-second_source_dir=$pre_dir/dotfiles/launch/configs/cargo/config
-target_dir=~/.cargo/config
+source_dir=$pre_dir/skhd/.skhdrc
+target_dir=~/.skhdrc
 target_backup=$target_dir-backup
-
+ 
 if [ ! -e "$source_dir" ]; then
   # echo "$source_dir not exists, try to find it in configs"
   source_dir=$second_source_dir

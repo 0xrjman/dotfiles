@@ -2,7 +2,6 @@ name=".yabairc"
 cur_dir=$(pwd)
 pre_dir=$(dirname $cur_dir)
 source_dir=$pre_dir/yabai/.yabairc
-second_source_dir=$pre_dir/dotfiles/launch/configs/yabai/.yabairc
 target_dir=~/.yabairc
 target_backup=$target_dir-backup
 

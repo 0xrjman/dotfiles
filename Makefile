@@ -3,8 +3,8 @@ help:
 	@echo "Usage: make <target>"
 	@echo ""
 	@echo "Main targets:"
-	@echo "  install          - Install all configurations."
-	@echo "  init             - Ensure scripts are executable."
+	@echo "  install          - Install all configurations"
+	@echo "  init             - Ensure scripts are executable"
 	@echo ""
 	@echo "Individual installation targets:"
 	@echo "  install-zsh"
@@ -22,7 +22,7 @@ help:
 	@echo "  install-aerospace"
 	@echo ""
 	@echo "Utility targets:"
-	@echo "  gitignore        - Initialize gitignore file."
+	@echo "  gitignore        - Initialize gitignore"
 	@echo "  setup-scripts    - Link scripts to ~/.scripts"
 
 # ==============================================================================
@@ -36,11 +36,11 @@ install: install-zsh install-nvim install-lvim install-yabai install-skhd \
 
 .PHONY: init
 init:
-	@chmod +x ./launch/common_init.sh
 	@find scripts -name '*.sh' -exec chmod +x {} +
-	@chmod +x ./launch/configs/git/init.sh
-	@chmod +x ./launch/configs/vim/init-nvim.sh
-	@chmod +x ./launch/configs/vim/init-lvim.sh
+	@chmod +x ./lib/install.sh
+	@chmod +x ./configs/git/init.sh 2>/dev/null || true
+	@chmod +x ./configs/vim/init-nvim.sh 2>/dev/null || true
+	@chmod +x ./configs/vim/init-lvim.sh 2>/dev/null || true
 
 # ==============================================================================
 # Utility Targets
@@ -49,7 +49,7 @@ init:
 .PHONY: gitignore
 gitignore:
 	@echo "Initializing gitignore..."
-	@./launch/configs/git/init.sh
+	@./configs/git/init.sh
 
 .PHONY: setup-scripts
 setup-scripts:
@@ -70,7 +70,7 @@ define install_template
 .PHONY: install-$(1)
 install-$(1): init
 	@echo "Initializing $(1)..."
-	./launch/common_init.sh $(1) $(2) '$(if $(3),$(3),$(HOME)/.config/$(1))' $(4)
+	./lib/install.sh $(1) $(2) '$(if $(3),$(3),$(HOME)/.config/$(1))' $(4)
 endef
 
 # Standard applications
@@ -91,15 +91,15 @@ $(eval $(call install_template,cargo,config,$(HOME)/.cargo))
 .PHONY: install-nvim
 install-nvim: init
 	@echo "Initializing neovim..."
-	@./launch/configs/vim/init-nvim.sh
+	@./configs/vim/init-nvim.sh
 
 .PHONY: install-lvim
 install-lvim: init
 	@echo "Initializing lunarvim..."
-	@./launch/configs/vim/init-lvim.sh
+	@./configs/vim/init-lvim.sh
 
 .PHONY: install-yazi
 install-yazi: init
 	@echo "Initializing yazi..."
 	@brew install yazi ffmpeg sevenzip jq poppler fd ripgrep fzf zoxide resvg imagemagick font-symbols-only-nerd-font
-	./launch/common_init.sh yazi yazi.toml ~/.config/yazi
+	./lib/install.sh yazi yazi.toml ~/.config/yazi

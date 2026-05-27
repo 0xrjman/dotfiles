@@ -25,7 +25,6 @@ name="sketchybar"
 cur_dir=$(pwd)
 pre_dir=$(dirname $cur_dir)
 source_dir=$pre_dir/sketchybar
-second_source_dir=$pre_dir/dotfiles/launch/configs/sketchybar
 target_dir=~/.config/sketchybar
 target_backup=$target_dir-backup
 

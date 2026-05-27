@@ -231,8 +231,8 @@ if test -d (brew --prefix)"/share/fish/vendor_completions.d"
 end
 
 function launch_script
-    ll $HOME/Workspace/Tool/dotfiles/launch/
-    echo $HOME/Workspace/Tool/dotfiles/launch/
+    ll $HOME/Workspace/Tool/dotfiles/configs/
+    echo $HOME/Workspace/Tool/dotfiles/configs/
 end
 
 function yabai_start

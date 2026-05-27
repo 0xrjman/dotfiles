@@ -1,9 +1,8 @@
-name="config.kdl"
+name="config.fish"
 cur_dir=$(pwd)
 pre_dir=$(dirname $cur_dir)
-source_dir=$pre_dir/zellij/config.kdl
-second_source_dir=$pre_dir/dotfiles/launch/configs/zellij/config.kdl
-target_dir=~/.config/zellij/config.kdl
+source_dir=$pre_dir/fish/config.fish
+target_dir=~/.config/fish/config.fish
 target_backup=$target_dir-backup
 
 if [ ! -e "$source_dir" ]; then
