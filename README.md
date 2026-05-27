@@ -6,10 +6,13 @@ Personal macOS development environment, configured through a unified `make` inte
 ## Quick Start
 
 ```sh
-make install
+make install          # Install everything
+./dotman              # Interactive TUI manager
 ```
 
 ## Usage
+
+### CLI
 
 | Command | Description |
 |---------|-------------|
@@ -17,6 +20,23 @@ make install
 | `make install-<app>` | Install a single app config (e.g., `make install-nvim`) |
 | `make init` | Ensure install.sh is executable |
 | `make help` | List all available targets |
+| `./dotman` | Interactive TUI manager |
+| `./dotman status` | Print compact config status |
+| `./dotman install` | Install everything from TUI |
+| `./dotman repair` | Fix broken symlinks |
+| `./dotman browse` | Browse configs with preview |
+
+### TUI (Interactive)
+
+Run `./dotman` for a full-screen terminal UI:
+
+```
+  [i] Install all    [r] Repair broken    [v] View config
+  [b] Browse         [s] Scripts          [f] Fix one / [o] Install one
+  [q] Quit           [?] Help
+```
+
+Browse mode shows a preview panel — select a config and see its file contents on the right.
 
 ## Managed Applications
 

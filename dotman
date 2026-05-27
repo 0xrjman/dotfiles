@@ -1,0 +1,747 @@
+#!/usr/bin/env bash
+#
+# dotman — Dotfiles Config Manager TUI
+# ======================================
+# Interactive terminal UI for managing dotfiles configurations.
+# Requires: bash 4+, fzf, make
+#
+
+set -euo pipefail
+
+# ─── Config ─────────────────────────────────────────────────────────────────
+
+DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
+CONFIG_DIR="$DOTFILES_DIR/configs"
+MAKEFILE="$DOTFILES_DIR/Makefile"
+
+# Config definitions: name:category:target:source_dir:install_cmd
+#   name       — Display name
+#   category   — Group in dashboard
+#   target     — Where the config should be symlinked (~ expands)
+#   source_dir — Relative path under configs/ (e.g. "vim/lvim")
+#   install_cmd — make target or "none"
+CONFIGS=(
+  "zsh:Shell:~/.zshrc:zsh:make install-zsh"
+  "fish:Shell:~/.config/fish/config.fish:fish:make install-fish"
+  "alacritty:Terminal:~/.config/alacritty:alacritty:make install-alacritty"
+  "zellij:Terminal:~/.config/zellij/config.kdl:zellij:make install-zellij"
+  "lvim:Editor:~/.config/lvim:vim/lvim:make install-lvim"
+  "nvim:Editor:~/.config/nvim:vim/nvim:make install-nvim"
+  "yabai:Window:~/.yabairc:yabai:make install-yabai"
+  "skhd:Window:~/.skhdrc:skhd:make install-skhd"
+  "aerospace:Window:~/.config/aerospace:aerospace:make install-aerospace"
+  "sketchybar:Status:~/.config/sketchybar:sketchybar:make install-sketchybar"
+  "btop:System:~/.config/btop:btop:make install-btop"
+  "yazi:File:~/.config/yazi:yazi:make install-yazi"
+  "cargo:Tools:~/.cargo/config:cargo:make install-cargo"
+  "conda:Tools:~/.condarc:conda:make install-conda"
+  "pip:Tools:~/.config/pip/pip.conf:pip:make install-pip"
+  "git:Tools:~/.gitignore_global:git:make gitignore"
+)
+
+# ─── Colors ──────────────────────────────────────────────────────────────────
+
+if [[ -t 1 ]] && [[ "$(tput colors 2>/dev/null || echo 0)" -ge 8 ]]; then
+  readonly BOLD="$(tput bold)"
+  readonly DIM="$(tput dim)"
+  readonly RED="$(tput setaf 1)"
+  readonly GREEN="$(tput setaf 2)"
+  readonly YELLOW="$(tput setaf 3)"
+  readonly BLUE="$(tput setaf 4)"
+  readonly MAGENTA="$(tput setaf 5)"
+  readonly CYAN="$(tput setaf 6)"
+  readonly WHITE="$(tput setaf 7)"
+  readonly RESET="$(tput sgr0)"
+else
+  readonly BOLD="" RED="" GREEN="" YELLOW="" BLUE=""
+  readonly MAGENTA="" CYAN="" WHITE="" DIM="" RESET=""
+fi
+
+# ─── Helpers ─────────────────────────────────────────────────────────────────
+
+log_info()  { echo "${BLUE}==>${RESET} $*"; }
+log_ok()    { echo "${GREEN}✓${RESET} $*"; }
+log_warn()  { echo "${YELLOW}⚠${RESET} $*"; }
+log_err()   { echo "${RED}✗${RESET} $*" >&2; }
+log_step()  { echo "${CYAN}→${RESET} $*"; }
+log_header(){ echo "${BOLD}${MAGENTA}$*${RESET}"; }
+
+get_config_state() {
+  local name="$1" target="$2" source_dir="$3"
+  local config_path="$CONFIG_DIR/$source_dir"
+
+  # Check if config source exists in repo
+  if [[ ! -d "$config_path" ]] && [[ ! -f "$config_path" ]]; then
+    echo "unavailable"
+    return
+  fi
+
+  eval "local expanded_target=$target"
+
+  if [[ -L "$expanded_target" ]]; then
+    local link_target
+    link_target="$(readlink "$expanded_target")"
+    if [[ -e "$expanded_target" ]]; then
+      if [[ "$link_target" == *"$DOTFILES_DIR/configs/"* ]]; then
+        echo "linked"
+      else
+        echo "external"
+      fi
+    else
+      echo "broken"
+    fi
+  elif [[ -e "$expanded_target" ]]; then
+    echo "manual"
+  elif [[ "$name" == "nvim" ]]; then
+    echo "lvim_bootstrap"
+  else
+    echo "missing"
+  fi
+}
+
+get_state_icon() {
+  case "$1" in
+    linked)         echo "${GREEN}✓${RESET}" ;;
+    lvim_bootstrap) echo "${DIM}${CYAN}~${RESET}" ;;
+    external)       echo "${YELLOW}→${RESET}" ;;
+    broken)         echo "${RED}✗${RESET}" ;;
+    manual)         echo "${BLUE}•${RESET}" ;;
+    missing)        echo "${DIM}${WHITE}-${RESET}" ;;
+    unavailable)    echo "${DIM}${WHITE}~${RESET}" ;;
+    *)              echo "${DIM}?${RESET}" ;;
+  esac
+}
+
+get_state_label() {
+  case "$1" in
+    linked)         echo "${GREEN}linked${RESET}" ;;
+    lvim_bootstrap) echo "${DIM}${CYAN}lvim-bs${RESET}" ;;
+    external)       echo "${YELLOW}external${RESET}" ;;
+    broken)         echo "${RED}broken${RESET}" ;;
+    manual)         echo "${BLUE}manual${RESET}" ;;
+    missing)        echo "${DIM}not-installed${RESET}" ;;
+    unavailable)    echo "${DIM}n/a${RESET}" ;;
+    *)              echo "${DIM}unknown${RESET}" ;;
+  esac
+}
+
+# ─── Screen: Dashboard ──────────────────────────────────────────────────────
+
+show_dashboard() {
+  clear
+
+  # ── Header ──
+  echo "${BOLD}${CYAN}"
+  echo "  ╔══════════════════════════════════════════════════════╗"
+  echo "  ║  ${BOLD}${WHITE}⚡ dotman — Dotfiles Config Manager${RESET}${BOLD}${CYAN}            ║"
+  echo "  ╚══════════════════════════════════════════════════════╝${RESET}"
+  echo ""
+
+  # ── Compute states ──
+  local total=0 linked=0 broken=0 missing=0 manual=0 external=0 boot=0
+  declare -A STATES
+
+  for entry in "${CONFIGS[@]}"; do
+    local name target source_dir
+    IFS=':' read -r name _ target source_dir _ <<< "$entry"
+    STATES[$name]="$(get_config_state "$name" "$target" "$source_dir")"
+    case "${STATES[$name]}" in
+      linked)         ((linked++)) ;;
+      lvim_bootstrap) ((boot++)) ;;
+      external)       ((external++)) ;;
+      broken)         ((broken++)) ;;
+      manual)         ((manual++)) ;;
+      missing)        ((missing++)) ;;
+    esac
+    ((total++))
+  done
+
+  # ── Status Bar ──
+  echo "  ${DIM}Status:${RESET}  ${GREEN}$linked linked${RESET}"
+  [[ $broken -gt 0 ]]  && echo "  · ${RED}$broken broken${RESET}"
+  [[ $missing -gt 0 ]] && echo "  · ${YELLOW}$missing not-installed${RESET}"
+  [[ $manual -gt 0 ]]  && echo "  · ${BLUE}$manual manual${RESET}"
+  [[ $boot -gt 0 ]]    && echo "  · ${CYAN}$boot lvim-bs${RESET}"
+  [[ $external -gt 0 ]]&& echo "  · ${YELLOW}$external external${RESET}"
+  echo ""
+  echo ""
+
+  # ── Config List by Category ──
+  local current_cat=""
+  for entry in "${CONFIGS[@]}"; do
+    local name cat target source_dir cmd
+    IFS=':' read -r name cat target source_dir cmd <<< "$entry"
+    local state="${STATES[$name]}"
+    local icon="$(get_state_icon "$state")"
+
+    if [[ "$cat" != "$current_cat" ]]; then
+      current_cat="$cat"
+      echo "  ${BOLD}${WHITE}$cat${RESET}"
+    fi
+
+    printf "  %s %-14s ${DIM}%-28s${RESET}  %b\n" \
+      "$icon" "$name" "$target" "$(get_state_label "$state")"
+  done
+
+  echo ""
+  echo "  ${DIM}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+  echo ""
+  echo "  ${BOLD}[${GREEN}i${RESET}]${BOLD} install all${RESET}    ${BOLD}[${YELLOW}r${RESET}]${BOLD} repair broken${RESET}   ${BOLD}[${BLUE}v${RESET}]${BOLD} view config${RESET}   ${BOLD}[${MAGENTA}s${RESET}]${BOLD} scripts${RESET}   ${BOLD}[${RED}q${RESET}]${BOLD} quit${RESET}"
+  echo "  ${BOLD}[${CYAN}b${RESET}]${BOLD} browse${RESET}          ${BOLD}[${GREEN}f${RESET}]${BOLD} fix one${RESET}        ${BOLD}[${BLUE}o${RESET}]${BOLD} install one${RESET}"
+  echo ""
+}
+
+# ─── Actions ─────────────────────────────────────────────────────────────────
+
+install_all() {
+  log_info "Installing all configurations..."
+  echo ""
+  cd "$DOTFILES_DIR"
+  if make install 2>&1; then
+    echo ""
+    log_ok "All configurations installed."
+  else
+    echo ""
+    log_err "Some installations failed. Check messages above."
+  fi
+  echo ""
+  read -rp "${DIM}Press Enter to continue...${RESET}"
+}
+
+repair_broken() {
+  clear
+  log_header "🔧 Repair Broken Symlinks"
+  echo ""
+  local fixed=0 not_fixed=0
+
+  for entry in "${CONFIGS[@]}"; do
+    local name target source_dir cmd
+    IFS=':' read -r name _ target source_dir cmd <<< "$entry"
+    local state
+    state="$(get_config_state "$name" "$target" "$source_dir")"
+
+    if [[ "$state" == "broken" ]] || [[ "$state" == "missing" ]]; then
+      log_step "Fixing ${BOLD}$name${RESET} → $target"
+      if [[ "$cmd" != "none" ]]; then
+        cd "$DOTFILES_DIR"
+        if make "install-$name" 2>/dev/null; then
+          log_ok "Fixed $name"
+          ((fixed++))
+        else
+          log_err "Failed to install $name"
+          ((not_fixed++))
+        fi
+      else
+        log_warn "$name has no install target, skipping"
+        ((not_fixed++))
+      fi
+    fi
+  done
+
+  echo ""
+  if [[ $fixed -gt 0 ]]; then
+    log_ok "Fixed $fixed config(s)"
+  fi
+  if [[ $not_fixed -gt 0 ]]; then
+    log_warn "$not_fixed config(s) could not be fixed"
+  fi
+  if [[ $fixed -eq 0 ]] && [[ $not_fixed -eq 0 ]]; then
+    log_info "All configs are healthy — nothing to fix."
+  fi
+  echo ""
+  read -rp "${DIM}Press Enter to continue...${RESET}"
+}
+
+install_one() {
+  local choices=()
+  for entry in "${CONFIGS[@]}"; do
+    local name target source_dir cmd
+    IFS=':' read -r name _ target source_dir cmd <<< "$entry"
+    local state
+    state="$(get_config_state "$name" "$target" "$source_dir")"
+    if [[ "$state" != "linked" ]] && [[ "$state" != "lvim_bootstrap" ]] && [[ "$cmd" != "none" ]]; then
+      choices+=("$name|$target|$state")
+    fi
+  done
+
+  if [[ ${#choices[@]} -eq 0 ]]; then
+    log_info "All configs are already installed."
+    echo ""
+    read -rp "${DIM}Press Enter to continue...${RESET}"
+    return
+  fi
+
+  if command -v fzf &>/dev/null; then
+    local selection
+    selection="$(
+      for c in "${choices[@]}"; do
+        local name target state
+        IFS='|' read -r name target state <<< "$c"
+        local icon="$(get_state_icon "$state")"
+        printf "%s %-14s %s\n" "$icon" "$name" "$target"
+      done | fzf --prompt="Select config to install: " \
+                  --height=15 \
+                  --preview "echo '{2}'" \
+                  --preview-window=hidden \
+                  --ansi
+    )"
+    if [[ -z "$selection" ]]; then
+      echo ""
+      log_info "Cancelled."
+      echo ""
+      read -rp "${DIM}Press Enter to continue...${RESET}"
+      return
+    fi
+    local selected_name
+    selected_name="$(echo "$selection" | awk '{print $2}')"
+
+    log_step "Installing $selected_name..."
+    cd "$DOTFILES_DIR"
+    if make "install-$selected_name" 2>&1; then
+      log_ok "$selected_name installed."
+    else
+      log_err "Installation failed."
+    fi
+  else
+    echo "Select a config to install:"
+    local i=1
+    declare -A MENU_MAP
+    for c in "${choices[@]}"; do
+      local name target state
+      IFS='|' read -r name target state <<< "$c"
+      local icon="$(get_state_icon "$state")"
+      printf "  ${BOLD}%2d${RESET}) %s %-14s ${DIM}%s${RESET}\n" "$i" "$icon" "$name" "$target"
+      MENU_MAP[$i]="$name"
+      ((i++))
+    done
+    echo "  0) Cancel"
+    echo ""
+    read -rp "Choice [0-$((${#choices[@]}))]: " choice
+    if [[ "$choice" =~ ^[0-9]+$ ]] && [[ "$choice" -gt 0 ]] && [[ "$choice" -le ${#choices[@]} ]]; then
+      local sel_name="${MENU_MAP[$choice]}"
+      log_step "Installing $sel_name..."
+      cd "$DOTFILES_DIR"
+      if make "install-$sel_name" 2>&1; then
+        log_ok "$sel_name installed."
+      else
+        log_err "Installation failed."
+      fi
+    fi
+  fi
+  echo ""
+  read -rp "${DIM}Press Enter to continue...${RESET}"
+}
+
+fix_one() {
+  local broken_list=()
+  for entry in "${CONFIGS[@]}"; do
+    local name target source_dir cmd
+    IFS=':' read -r name _ target source_dir cmd <<< "$entry"
+    local state
+    state="$(get_config_state "$name" "$target" "$source_dir")"
+    if [[ "$state" == "broken" ]]; then
+      broken_list+=("$name|$target")
+    fi
+  done
+
+  if [[ ${#broken_list[@]} -eq 0 ]]; then
+    log_info "No broken symlinks to fix."
+    echo ""
+    read -rp "${DIM}Press Enter to continue...${RESET}"
+    return
+  fi
+
+  if command -v fzf &>/dev/null; then
+    local selection
+    selection="$(
+      for c in "${broken_list[@]}"; do
+        local name target
+        IFS='|' read -r name target <<< "$c"
+        printf "${RED}✗${RESET} %-14s %s\n" "$name" "$target"
+      done | fzf --prompt="Select config to fix: " \
+                  --height=10 --ansi
+    )"
+    [[ -z "$selection" ]] && { log_info "Cancelled."; read -rp "${DIM}Press Enter...${RESET}"; return; }
+    local sel_name
+    sel_name="$(echo "$selection" | awk '{print $2}')"
+    log_step "Reinstalling $sel_name..."
+    cd "$DOTFILES_DIR"
+    make "install-$sel_name" 2>&1 && log_ok "$sel_name fixed." || log_err "Failed."
+  else
+    echo "Broken configs:"
+    local i=1
+    declare -A BROKEN_MAP
+    for c in "${broken_list[@]}"; do
+      local name target
+      IFS='|' read -r name target <<< "$c"
+      printf "  %d) %s -> %s\n" "$i" "$name" "$target"
+      BROKEN_MAP[$i]="$name"
+      ((i++))
+    done
+    echo "  0) Cancel"
+    read -rp "Choice: " choice
+    if [[ "$choice" =~ ^[0-9]+$ ]] && [[ "$choice" -gt 0 ]] && [[ "$choice" -le ${#broken_list[@]} ]]; then
+      local sel_name="${BROKEN_MAP[$choice]}"
+      log_step "Reinstalling $sel_name..."
+      cd "$DOTFILES_DIR"
+      make "install-$sel_name" 2>&1 && log_ok "$sel_name fixed." || log_err "Failed."
+    fi
+  fi
+  echo ""
+  read -rp "${DIM}Press Enter to continue...${RESET}"
+}
+
+view_config() {
+  if ! command -v fzf &>/dev/null; then
+    log_warn "fzf is recommended for browsing configs."
+    echo "Available configs:"
+    for entry in "${CONFIGS[@]}"; do
+      local name target
+      IFS=':' read -r name _ target source_dir _ <<< "$entry"
+      local state="$(get_config_state "$name" "$target" "$source_dir")"
+      local icon="$(get_state_icon "$state")"
+      printf "  %s %-14s\n" "$icon" "$name"
+    done
+    echo ""
+    read -rp "Config name to view: " sel_name
+    [[ -z "$sel_name" ]] && return
+    local config_path="$CONFIG_DIR/$sel_name"
+    if [[ -d "$config_path" ]]; then
+      echo ""
+      log_info "Contents of $config_path:"
+      ls -la "$config_path"
+    elif [[ -f "$config_path" ]]; then
+      echo ""
+      cat "$config_path"
+    else
+      # Try finding by source_dir
+      for entry in "${CONFIGS[@]}"; do
+        local name source_dir
+        IFS=':' read -r name _ _ source_dir _ <<< "$entry"
+        if [[ "$name" == "$sel_name" ]]; then
+          config_path="$CONFIG_DIR/$source_dir"
+          if [[ -d "$config_path" ]]; then
+            ls -la "$config_path"
+          elif [[ -f "$config_path" ]]; then
+            cat "$config_path"
+          fi
+          break
+        fi
+      done
+    fi
+    echo ""
+    read -rp "${DIM}Press Enter to continue...${RESET}"
+    return
+  fi
+
+  local selection
+  selection="$(
+    for entry in "${CONFIGS[@]}"; do
+      local name target source_dir
+      IFS=':' read -r name _ target source_dir _ <<< "$entry"
+      local state="$(get_config_state "$name" "$target" "$source_dir")"
+      local icon="$(get_state_icon "$state")"
+      printf "%s %s\n" "$icon" "$name"
+    done | fzf --prompt="Select config to view: " \
+               --height=20 \
+               --preview "
+                 n=\$(echo {} | awk '{print \$2}');
+                 dir='$CONFIG_DIR'/*/\"\$n\" 2>/dev/null || dir='$CONFIG_DIR'/*/\"\$n/..\";
+                 dir='$CONFIG_DIR'/*/\$n;
+                 for d in '$CONFIG_DIR'/*/; do
+                   base=\$(basename \"\$d\");
+                   if [ \"\$base\" = \"\$n\" ]; then
+                     actual=\"\$d\";
+                     break;
+                   fi;
+                 done;
+                 if [ -d \"\$actual\" ]; then
+                   echo \"${DIM}── Config Source: \$actual ──${RESET}\";
+                   ls -la \"\$actual\" 2>/dev/null | tail -n +2;
+                   echo '';
+                   for f in \"\$actual\"/* \"\$actual\"/.*; do
+                     [ -f \"\$f\" ] || continue;
+                     lines=\$(wc -l < \"\$f\" 2>/dev/null || echo 0);
+                     echo \"${DIM}── \$(basename \"\$f\") (\$lines lines) ──${RESET}\";
+                     head -30 \"\$f\";
+                     [ \"\$lines\" -gt 30 ] && echo '... (truncated)';
+                     echo '';
+                   done;
+                 else
+                   echo 'No config source found. Try browsing instead.';
+                 fi
+               " \
+               --preview-window=right:60%:wrap \
+               --ansi
+  )"
+
+  echo ""
+  read -rp "${DIM}Press Enter to continue...${RESET}"
+}
+
+browse_configs() {
+  if ! command -v fzf &>/dev/null; then
+    view_config
+    return
+  fi
+
+  clear
+  log_header "📂 Config Browser"
+  echo ""
+  log_info "Navigate with ↑↓, preview on the right, Enter to see details."
+  echo ""
+
+  local selection
+  selection="$(
+    for entry in "${CONFIGS[@]}"; do
+      local name target source_dir
+      IFS=':' read -r name _ target source_dir _ <<< "$entry"
+      local state="$(get_config_state "$name" "$target" "$source_dir")"
+      local icon="$(get_state_icon "$state")"
+      printf "%s %s|%s|%s\n" "$icon" "$name" "$target" "$source_dir"
+    done | fzf --prompt="Browse configs > " \
+               --height=30 \
+               --with-nth=1,2 \
+               --delimiter='|' \
+               --preview "
+                 raw=\$(echo {} | awk -F'|' '{print \$1}');
+                 name=\$(echo \"\$raw\" | awk '{print \$2}');
+                 srcdir=\$(echo {} | awk -F'|' '{print \$4}');
+                 dir='$CONFIG_DIR/\$srcdir';
+                 echo \"${BOLD}Config: \$name${RESET}\";
+                 echo \"${DIM}Source: \$dir${RESET}\";
+                 echo '';
+                 if [ -d \"\$dir\" ]; then
+                   echo \"${DIM}── Files ──${RESET}\";
+                   ls -la \"\$dir\" 2>/dev/null | tail -n +2;
+                   echo '';
+                   for f in \"\$dir\"/*; do
+                     [ -f \"\$f\" ] || continue;
+                     base=\$(basename \"\$f\");
+                     lines=\$(wc -l < \"\$f\" 2>/dev/null || echo 0);
+                     echo \"${DIM}── \$base (\$lines lines) ──${RESET}\";
+                     head -40 \"\$f\";
+                     [ \"\$lines\" -gt 40 ] && echo '... (truncated)';
+                     echo '';
+                   done;
+                 elif [ -f \"\$dir\" ]; then
+                   cat \"\$dir\";
+                 else
+                   echo 'Config source not found in repo.';
+                 fi
+               " \
+               --preview-window=right:65%:wrap \
+               --ansi \
+               --bind 'enter:execute(echo {} | awk -F"|" "{print \$2}" | xargs echo)+abort'
+  )" || true
+
+  if [[ -n "$selection" ]]; then
+    clear
+    local sel_name="$selection"
+    # Find source_dir for this config
+    local found_source=""
+    for entry in "${CONFIGS[@]}"; do
+      local name source_dir
+      IFS=':' read -r name _ _ source_dir _ <<< "$entry"
+      if [[ "$name" == "$sel_name" ]]; then
+        found_source="$source_dir"
+        break
+      fi
+    done
+
+    if [[ -n "$found_source" ]]; then
+      local config_path="$CONFIG_DIR/$found_source"
+      log_info "Config: ${BOLD}$sel_name${RESET}  →  ${DIM}$config_path${RESET}"
+      echo ""
+      if [[ -f "$config_path" ]]; then
+        cat "$config_path"
+      elif [[ -d "$config_path" ]]; then
+        for f in "$config_path"/* "$config_path"/.*; do
+          [[ -f "$f" ]] || continue
+          local base="$(basename "$f")"
+          local lines="$(wc -l < "$f" 2>/dev/null || echo 0)"
+          echo "${BOLD}${CYAN}── $base ($lines lines) ──${RESET}"
+          cat "$f"
+          echo ""
+        done
+      fi
+    else
+      log_err "Config not found."
+    fi
+    echo ""
+    read -rp "${DIM}Press Enter to continue...${RESET}"
+  fi
+}
+
+show_scripts() {
+  clear
+  log_header "📜 Utility Scripts"
+  echo ""
+
+  if [[ -d "$DOTFILES_DIR/scripts" ]]; then
+    local scripts=()
+    for script in "$DOTFILES_DIR/scripts"/*; do
+      [[ -f "$script" ]] && scripts+=("$script")
+    done
+
+    if [[ ${#scripts[@]} -eq 0 ]]; then
+      log_warn "No scripts found."
+      echo ""
+      read -rp "${DIM}Press Enter to continue...${RESET}"
+      return
+    fi
+
+    local i=1
+    declare -A SCRIPT_MAP
+    for script in "${scripts[@]}"; do
+      local base="$(basename "$script")"
+      local perms="$(stat -f "%p" "$script" 2>/dev/null | tail -c 4)"
+      printf "  ${BOLD}%2d${RESET}) %-24s  ${DIM}[%s]${RESET}\n" "$i" "$base" "$perms"
+      SCRIPT_MAP[$i]="$script"
+      ((i++))
+    done
+    echo "  0) Back"
+    echo ""
+    read -rp "Select script to view/run [0-$((${#scripts[@]}))]: " choice
+    if [[ "$choice" =~ ^[0-9]+$ ]] && [[ "$choice" -gt 0 ]] && [[ "$choice" -le ${#scripts[@]} ]]; then
+      local script_path="${SCRIPT_MAP[$choice]}"
+      local base="$(basename "$script_path")"
+      echo ""
+      log_info "Contents of ${BOLD}$base${RESET}:"
+      echo ""
+      cat "$script_path"
+      echo ""
+      read -rp "Run this script? [Y/n]: " run_choice
+      if [[ "$run_choice" != "n" ]] && [[ "$run_choice" != "N" ]]; then
+        echo ""
+        log_step "Running $base..."
+        echo ""
+        cd "$DOTFILES_DIR"
+        bash "$script_path" || true
+        echo ""
+        log_ok "Done."
+      fi
+    fi
+  else
+    log_warn "No scripts directory found."
+  fi
+  echo ""
+  read -rp "${DIM}Press Enter to continue...${RESET}"
+}
+
+# ─── Main Loop ──────────────────────────────────────────────────────────────
+
+main() {
+  if ! command -v make &>/dev/null; then
+    log_err "make is required but not installed."
+    exit 1
+  fi
+
+  # Quick-action CLI mode
+  if [[ $# -gt 0 ]]; then
+    case "$1" in
+      install|install-all|all)
+        install_all
+        exit 0
+        ;;
+      repair|fix|repair-broken)
+        repair_broken
+        exit 0
+        ;;
+      status|check)
+        for entry in "${CONFIGS[@]}"; do
+          local name target source_dir
+          IFS=':' read -r name _ target source_dir _ <<< "$entry"
+          local state="$(get_config_state "$name" "$target" "$source_dir")"
+          local icon="$(get_state_icon "$state")"
+          printf "%s %-14s %b\n" "$icon" "$name" "$(get_state_label "$state")"
+        done
+        exit 0
+        ;;
+      browse)
+        browse_configs
+        exit 0
+        ;;
+      install-one)
+        install_one
+        exit 0
+        ;;
+      fix-one)
+        fix_one
+        exit 0
+        ;;
+      help|--help|-h)
+        echo "Usage: dotman [command]"
+        echo ""
+        echo "Commands (without args: interactive TUI):"
+        echo "  install       Install all configs"
+        echo "  repair        Fix broken symlinks"
+        echo "  status        Print compact status"
+        echo "  browse        Browse configs with preview"
+        echo "  install-one   Install one config"
+        echo "  fix-one       Fix one broken config"
+        exit 0
+        ;;
+    esac
+  fi
+
+  # Interactive mode
+  while true; do
+    show_dashboard
+
+    local has_issues=false
+    for entry in "${CONFIGS[@]}"; do
+      local name target source_dir
+      IFS=':' read -r name _ target source_dir _ <<< "$entry"
+      local state="$(get_config_state "$name" "$target" "$source_dir")"
+      if [[ "$state" == "broken" ]] || [[ "$state" == "missing" ]]; then
+        has_issues=true
+        break
+      fi
+    done
+
+    if $has_issues; then
+      echo "  ${YELLOW}⚠  Some configs have issues. Use [r] to repair or [i] to install.${RESET}"
+      echo ""
+    fi
+
+    read -rsn1 key
+    case "$key" in
+      i|I) install_all ;;
+      r|R) repair_broken ;;
+      v|V) view_config ;;
+      b|B) browse_configs ;;
+      s|S) show_scripts ;;
+      f|F) fix_one ;;
+      o|O) install_one ;;
+      q|Q) 
+        clear
+        echo "${GREEN}Goodbye!${RESET}"
+        exit 0
+        ;;
+      $'\x03')
+        clear
+        exit 0
+        ;;
+      '?')
+        clear
+        log_header "💡 Help"
+        echo ""
+        echo "  ${BOLD}Key    Action${RESET}"
+        echo "  ${GREEN}i${RESET}      Install all configurations"
+        echo "  ${YELLOW}r${RESET}      Repair all broken symlinks"
+        echo "  ${BLUE}v${RESET}      View a config's files"
+        echo "  ${CYAN}b${RESET}      Browse configs with preview panel"
+        echo "  ${MAGENTA}s${RESET}      View/run utility scripts"
+        echo "  ${GREEN}f${RESET}      Fix one specific config"
+        echo "  ${BLUE}o${RESET}      Install one specific config"
+        echo "  ${RED}q${RESET}      Quit"
+        echo "  ?       Show this help"
+        echo ""
+        read -rp "${DIM}Press Enter to continue...${RESET}"
+        ;;
+    esac
+  done
+}
+
+main "$@"

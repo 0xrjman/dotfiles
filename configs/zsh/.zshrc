@@ -312,11 +312,8 @@ export PNPM_HOME="$HOME/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
 
-# dotfiles launch script
-function launch_script() {
-  ll ~/Workspace/Tool/dotfiles/launch/
-  echo "~/Workspace/Tool/dotfiles/launch/"
-}
+# dotfiles config manager
+alias dotman="~/.local/bin/dotman"
 alias ls='exa'
 # alias ls='lsd'
 

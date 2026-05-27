@@ -19,6 +19,8 @@ help:
 	@echo "  install-btop"
 	@echo "  install-yazi"
 	@echo "  install-aerospace"
+	@echo "  install-conda"
+	@echo "  install-pip"
 	@echo ""
 	@echo "Utility targets:"
 	@echo "  gitignore        - Link global gitignore"
@@ -31,7 +33,8 @@ help:
 .PHONY: install
 install: install-zsh install-nvim install-lvim install-yabai install-skhd \
          install-zellij install-alacritty install-fish install-cargo \
-         install-sketchybar install-btop install-yazi install-aerospace
+         install-sketchybar install-btop install-yazi install-aerospace \
+         install-conda install-pip
 
 .PHONY: init
 init:
@@ -52,6 +55,13 @@ setup-scripts:
 	@echo "Linking scripts to ~/.scripts..."
 	@ln -sfn "$(PWD)/scripts" ~/.scripts
 
+.PHONY: dotman
+setup-dotman:
+	@echo "Linking dotman to ~/.local/bin/dotman..."
+	@mkdir -p ~/.local/bin
+	@ln -sf "$(PWD)/dotman" ~/.local/bin/dotman
+	@echo "Run 'dotman' from anywhere to manage your dotfiles."
+
 # ==============================================================================
 # Installation Framework
 # ==============================================================================
@@ -71,17 +81,20 @@ endef
 
 # --- File-mode configs (single file symlink) ---
 $(eval $(call install_template,zsh,.zshrc,$(HOME)/.zshrc))
-$(eval $(call install_template,yabai,.yabairc,$(HOME)/.yabairc))
-$(eval $(call install_template,skhd,.skhdrc,$(HOME)/.skhdrc))
+$(eval $(call install_template,yabai,.yabairc,$(HOME)/.yabairc,"",'yabai --restart-service'))
+$(eval $(call install_template,skhd,.skhdrc,$(HOME)/.skhdrc,"",'skhd --restart-service'))
 $(eval $(call install_template,cargo,config,$(HOME)/.cargo/config))
 
 # --- Directory-mode configs (whole dir symlink) ---
 $(eval $(call install_template,fish,.,$(HOME)/.config/fish))
 $(eval $(call install_template,zellij,.,$(HOME)/.config/zellij))
-$(eval $(call install_template,sketchybar,.,$(HOME)/.config/sketchybar,,'brew services restart sketchybar'))
+$(eval $(call install_template,sketchybar,.,$(HOME)/.config/sketchybar,"",'brew services restart sketchybar'))
 $(eval $(call install_template,btop,.,$(HOME)/.config/btop))
 $(eval $(call install_template,aerospace,.,$(HOME)/.config/aerospace))
 $(eval $(call install_template,alacritty,.,$(HOME)/.config/alacritty,true))
+
+$(eval $(call install_template,conda,.condarc,$(HOME)/.condarc))
+$(eval $(call install_template,pip,.pip/pip.conf,$(HOME)/.config/pip/pip.conf))
 
 # --- Custom install scripts (not using the template) ---
 .PHONY: install-nvim
