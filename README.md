@@ -1,21 +1,49 @@
 
-# 🚀 dotfiles
+# dotfiles
 
-My personal dev environment, supercharged with `make`.
+Personal macOS development environment, configured through a unified `make` interface.
 
 ## Quick Start
 
 ```sh
-make grant
 make install
 ```
 
 ## Usage
 
-Everything is managed via `Makefile`.
+| Command | Description |
+|---------|-------------|
+| `make install` | Install all configurations |
+| `make install-<app>` | Install a single app config (e.g., `make install-nvim`) |
+| `make init` | Ensure all scripts are executable |
+| `make help` | List all available targets |
 
-- `make install`: Installs all configurations.
-- `make install-<app>`: Installs a specific app config (e.g., `make install-nvim`).
-- `make help`: Shows all available commands.
+## Managed Applications
 
-Just dive into the `Makefile` for more details.
+| Category | Apps |
+|----------|------|
+| Shell | zsh, fish |
+| Editor | neovim, lunarvim |
+| Terminal | alacritty, zellij |
+| Window Manager | yabai + skhd, aerospace |
+| Status Bar | sketchybar |
+| File Manager | yazi |
+| System Monitor | btop |
+| Tools | git, cargo, conda, pip |
+
+## Structure
+
+```
+.
+├── Makefile          # Unified entry point
+├── configs/           # Application configurations (flat)
+├── lib/               # Installation framework
+├── scripts/           # Utility scripts
+└── .config -> configs  # Symlink for tool discovery
+```
+
+## Requirements
+
+- macOS
+- [Homebrew](https://brew.sh)
+- [make](https://www.gnu.org/software/make/)
