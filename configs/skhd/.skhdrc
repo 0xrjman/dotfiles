@@ -248,7 +248,7 @@ cmd + alt - w : yabai -m space --destroy
 # alt - space: toggle-neovide # symlinked my toggle script to /opt/homebrew/bin
 # alt - space: toggle-neovide # symlinked my toggle script to /opt/homebrew/bin
 # cmd - return : /Applications/Alacritty.app/Contents/MacOS/alacritty --single-instance -d ~
-cmd + return: /Applications/Typora.app/Contents/MacOS/Typora --single-instance -d ~
+cmd - return: /Applications/Typora.app/Contents/MacOS/Typora --single-instance -d ~
 
 # alt - space : ~/Workspace/Tool/dotfiles/launch/configs/raycast/neovide.sh
 # ================================ Multiple monitors ================================
