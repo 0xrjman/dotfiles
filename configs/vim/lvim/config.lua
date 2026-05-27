@@ -87,6 +87,27 @@ lvim.builtin.telescope.defaults.file_ignore_patterns = {
     "%.tar.gz",
 }
 
+-- rustaceanvim 配置
+vim.g.rustaceanvim = {
+    tools = {
+        executor = "rustaceanvim.executor.termopen",
+        inlay_hints = {
+            auto = true,
+        },
+    },
+    server = {
+        on_attach = function(client, bufnr)
+            vim.keymap.set("n", "<leader>lr", vim.lsp.buf.rename, { buffer = bufnr, desc = "Rename" })
+        end,
+        default_settings = {
+            ["rust-analyzer"] = {
+                cargo = {
+                    allFeatures = true,
+                },
+            },
+        },
+    },
+}
 local existingLspWhichKeys = lvim.builtin.which_key.mappings["l"]
 table.insert(existingLspWhichKeys, {
     name = "Inlay Hints",

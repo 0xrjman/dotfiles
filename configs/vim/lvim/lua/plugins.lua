@@ -4,10 +4,7 @@ local P = {}
 P.set = {
     -- theme: https://github.com/rockerBOO/awesome-neovim?tab=readme-ov-file#tree-sitter-supported-colorscheme
     { "nyoom-engineering/oxocarbon.nvim" },
-    { "ray-x/aurora" },
-    { "ray-x/starry.nvim" },
-    { "rebelot/kanagawa.nvim" },
-    { "sainnhe/gruvbox-material" },
+    -- (removed: aurora, starry, kanagawa, gruvbox-material — kept only oxocarbon)
     -- file explorer
     { "theniceboy/joshuto.nvim" },
     -- :Copilot setup
@@ -47,16 +44,7 @@ P.set = {
         "liuchengxu/vim-clap",
         build = ":Clap install-binary",
     },
-    -- https://github.com/hadronized/hop.nvim
-    {
-        "phaazon/hop.nvim",
-        event = "BufRead",
-        config = function()
-            require("hop").setup()
-            vim.api.nvim_set_keymap("n", "s", ":HopChar2<cr>", { silent = true })
-            vim.api.nvim_set_keymap("n", "S", ":HopWord<cr>", { silent = true })
-        end,
-    },
+    -- (removed: phaazon/hop.nvim — repo deleted)
     -- show git blame
     {
         "f-person/git-blame.nvim",
@@ -67,7 +55,7 @@ P.set = {
         end,
     },
     { "fatih/vim-go" },
-    { "olexsmir/gopher.nvim" },
+    -- (removed: olexsmir/gopher.nvim — redundant with vim-go)
     {
         "norcalli/nvim-colorizer.lua",
         config = function()
@@ -90,8 +78,12 @@ P.set = {
             require("symbols-outline").setup()
         end,
     },
-    { "jose-elias-alvarez/typescript.nvim" },
-    { "simrat39/rust-tools.nvim" },
+    -- (removed: jose-elias-alvarez/typescript.nvim — archived, use built-in tsserver)
+    {
+        "mrcjkb/rustaceanvim",
+        version = "^4",
+        lazy = false,
+    },
     {
         "saecki/crates.nvim",
         version = "v0.3.0",
@@ -109,8 +101,7 @@ P.set = {
         end,
     },
     { "gpanders/editorconfig.nvim" },
-    { "tact-lang/tree-sitter-tact" },
-    { "tact-lang/tact.vim"},
+    -- (removed: tact-lang plugins — TON-specific, not needed)
     -- :DiffviewOpen / :DiffviewClose
     { "sindrets/diffview.nvim" },
     {
@@ -159,42 +150,133 @@ P.set = {
 		},
         -- Wakatime plugin to track time
 		{ 'wakatime/vim-wakatime', lazy = false },
-        { "terryma/vim-multiple-cursors" },
-        { "cryshado/neovim-ton-dev" },
-        {
-            "NickvanDyke/opencode.nvim",
-            dependencies = {
-              -- Recommended for `ask()` and `select()`.
-              -- Required for `snacks` provider.
-              ---@module 'snacks' <- Loads `snacks.nvim` types for configuration intellisense.
-              { "folke/snacks.nvim", opts = { input = {}, picker = {}, terminal = {} } },
-            },
-            config = function()
-              ---@type opencode.Opts
-              vim.g.opencode_opts = {
-                -- Your configuration, if any — see `lua/opencode/config.lua`, or "goto definition".
-              }
+        -- (removed: terryma/vim-multiple-cursors — deprecated; cryshado/neovim-ton-dev — TON-specific)
+    {
+        "NickvanDyke/opencode.nvim",
+        dependencies = {
+          { "folke/snacks.nvim", opts = { input = {}, picker = {}, terminal = {} } },
+        },
+        config = function()
+          ---@type opencode.Opts
+          vim.g.opencode_opts = {}
 
-              -- Required for `opts.events.reload`.
-              vim.o.autoread = true
+          vim.o.autoread = true
 
-              -- Recommended/example keymaps.
-              vim.keymap.set({ "n", "x" }, "<C-a>", function() require("opencode").ask("@this: ", { submit = true }) end, { desc = "Ask opencode" })
-              vim.keymap.set({ "n", "x" }, "<C-x>", function() require("opencode").select() end,                          { desc = "Execute opencode action…" })
-              vim.keymap.set({ "n", "t" }, "<C-.>", function() require("opencode").toggle() end,                          { desc = "Toggle opencode" })
+          -- Keymaps
+          vim.keymap.set({ "n", "x" }, "<leader>aa", function() require("opencode").ask("@this: ", { submit = true }) end, { desc = "Opencode Ask" })
+          vim.keymap.set({ "n", "x" }, "<leader>ae", function() require("opencode").select() end, { desc = "Opencode Select/Edit" })
+          vim.keymap.set({ "n", "t" }, "<C-.>", function() require("opencode").toggle() end, { desc = "Toggle opencode" })
+          vim.keymap.set({ "n", "x" }, "go", function() return require("opencode").operator("@this ") end, { expr = true, desc = "Add range to opencode" })
+          vim.keymap.set("n", "goo", function() return require("opencode").operator("@this ") .. "_" end, { expr = true, desc = "Add line to opencode" })
+        end,
+    },
 
-              vim.keymap.set({ "n", "x" }, "go",  function() return require("opencode").operator("@this ") end,        { expr = true, desc = "Add range to opencode" })
-              vim.keymap.set("n", "goo", function() return require("opencode").operator("@this ") .. "_" end, { expr = true, desc = "Add line to opencode" })
 
-              vim.keymap.set("n", "<S-C-u>", function() require("opencode").command("session.half.page.up") end,   { desc = "opencode half page up" })
-              vim.keymap.set("n", "<S-C-d>", function() require("opencode").command("session.half.page.down") end, { desc = "opencode half page down" })
-
-              -- You may want these if you stick with the opinionated "<C-a>" and "<C-x>" above — otherwise consider "<leader>o".
-              vim.keymap.set("n", "+", "<C-a>", { desc = "Increment", noremap = true })
-              vim.keymap.set("n", "-", "<C-x>", { desc = "Decrement", noremap = true })
-            end,
-        }
-    }
+    -- === New Plugins ===
+    {
+        "rcarriga/nvim-notify",
+        event = "VeryLazy",
+        opts = {
+            background_colour = "#000000",
+        },
+    },
+    {
+        "folke/noice.nvim",
+        event = "VeryLazy",
+        dependencies = {
+            "MunifTanjim/nui.nvim",
+            "rcarriga/nvim-notify",
+        },
+        config = function()
+            require("noice").setup({
+                notify = {
+                    -- Use nvim-notify as the backend
+                    view = "notify",
+                },
+            })
+        end,
+    },
+    {
+        "vhyrro/neorg",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        init = function()
+            -- Add neorg's LuaRocks deps to the Lua path
+            local lazy_dir = vim.fn.expand("~/.local/share/lunarvim/lazy")
+            local deps = { "lua-utils.nvim", "pathlib.nvim", "nvim-nio" }
+            for _, dep in ipairs(deps) do
+                local base = lazy_dir .. "/" .. dep .. "/lua/"
+                package.path = base .. "?.lua;" .. base .. "?/init.lua;" .. package.path
+            end
+            -- Add nvim-treesitter parser dir to cpath so neorg can find norg/norg_meta parsers
+            local ts_parser_dir = vim.fn.expand("~/.local/share/lunarvim/site/pack/lazy/opt/nvim-treesitter")
+            package.cpath = ts_parser_dir .. "/?.so;" .. package.cpath
+        end,
+        config = function()
+            require("neorg").setup {
+                load = {
+                    ["core.defaults"] = {},
+                    ["core.concealer"] = {},
+                    ["core.dirman"] = {
+                        config = {
+                            workspaces = {
+                                notes = "~/notes",
+                            },
+                            default_workspace = "notes",
+                            open_last_workspace = "default",
+                        },
+                    },
+                    ["core.integrations.treesitter"] = {
+                        config = {
+                            warn_missing_parsers = false,
+                        },
+                    },
+                },
+            }
+        end,
+    },
+    {
+        "folke/edgy.nvim",
+        event = "VeryLazy",
+        opts = {},
+    },
+    {
+        "smiteshp/nvim-navic",
+        dependencies = "neovim/nvim-lspconfig",
+        config = function()
+            require("nvim-navic").setup {
+                separator = " > ",
+                highlight = true,
+                depth_limit = 5,
+            }
+        end,
+    },
+    {
+        "stevearc/oil.nvim",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        config = function()
+            require("oil").setup {
+                default_file_explorer = false,
+                view_options = { show_hidden = true },
+            }
+            vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+        end,
+    },
+    {
+        "sphamba/smear-cursor.nvim",
+        opts = {
+            smear_between_neighbor_lines = true,
+            stiffness = 0.6,
+        },
+    },
+    {
+        "chrisgrieser/nvim-spider",
+        keys = {
+            { "w", function() require("spider").motion("w") end, desc = "Spider-w" },
+            { "e", function() require("spider").motion("e") end, desc = "Spider-e" },
+            { "b", function() require("spider").motion("b") end, desc = "Spider-b" },
+        },
+    },
+}
 
 return P
 
