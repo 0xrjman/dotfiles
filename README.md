@@ -15,7 +15,7 @@ make install
 |---------|-------------|
 | `make install` | Install all configurations |
 | `make install-<app>` | Install a single app config (e.g., `make install-nvim`) |
-| `make init` | Ensure all scripts are executable |
+| `make init` | Ensure install.sh is executable |
 | `make help` | List all available targets |
 
 ## Managed Applications
@@ -38,8 +38,7 @@ make install
 ├── Makefile          # Unified entry point
 ├── configs/           # Application configurations (flat)
 ├── lib/               # Installation framework
-├── scripts/           # Utility scripts
-└── .config -> configs  # Symlink for tool discovery
+└── scripts/           # Utility scripts
 ```
 
 ## Requirements
