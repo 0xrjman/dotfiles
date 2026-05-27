@@ -20,7 +20,8 @@ alias vim 'nvim'
 alias vi 'nvim'
 alias v 'nvim'
 alias dk 'docker'
-alias nv 'neovide --multigrid --frame=none'
+alias nv 'neovide --frame=transparent --chdir ~/notes'
+alias lv 'neovide --frame=transparent --neovim-bin ~/.local/bin/lvim --chdir ~/notes'
 alias pn 'pnpm'
 alias git-cm 'git commit -m'
 alias git-current-branch 'git symbolic-ref --short HEAD'
@@ -229,6 +230,96 @@ end
 if test -d (brew --prefix)"/share/fish/vendor_completions.d"
     set -p fish_complete_path (brew --prefix)/share/fish/vendor_completions.d
 end
+
+# >>> ============ Remote Functions Start =========== <<<
+# remote — sshfs mount/umount/open/list
+function remote
+    set host $argv[1]
+    set remote_path $argv[2]
+    set mount_point "$HOME/mnt/$host"
+    switch $argv[1]
+        case mount
+            if test -z "$host" -o -z "$remote_path"
+                echo "Usage: remote mount <host> <remote_path>"
+                echo "Example: remote mount aeza_vps /root"
+                return 1
+            end
+            mkdir -p $mount_point
+            sshfs $host:$remote_path $mount_point -o follow_symlinks,reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other
+            echo "📂 Mounted $host:$remote_path → $mount_point"
+        case umount
+            if test -z "$host"
+                echo "Usage: remote umount <host>"
+                echo "Example: remote umount aeza_vps"
+                return 1
+            end
+            umount $mount_point 2>/dev/null; or diskutil unmount $mount_point 2>/dev/null; or fusermount -u $mount_point 2>/dev/null
+            echo "🔌 Unmounted $host"
+        case open
+            if test -z "$host" -o -z "$remote_path"
+                echo "Usage: remote open <host> <remote_path>"
+                echo "Example: remote open aeza_vps /root"
+                return 1
+            end
+            mkdir -p $mount_point
+            sshfs $host:$remote_path $mount_point -o follow_symlinks,reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other
+            and neovide --frame=transparent --chdir $mount_point
+        case list
+            echo "=== Mounted ==="
+            mount | grep sshfs | awk '{print $1, $3}'
+            echo
+            echo "=== SSH Hosts ==="
+            grep "^Host " ~/.ssh/config | awk '{print $2}'
+        case '*'
+            echo "Usage: remote {mount|umount|open|list} [host] [remote_path]"
+    end
+end
+
+# ls_s — remote ls via ssh
+function ls_s
+    if test (count $argv) -lt 2
+        echo "Usage: ls_s <host> <remote_path>"
+        echo "Example: ls_s aeza_vps /root"
+        return 1
+    end
+    ssh $argv[1] "ls -lah $argv[2]"
+end
+
+# mv_s — remote mv via ssh
+function mv_s
+    if test (count $argv) -lt 3
+        echo "Usage: mv_s <host> <src_path> <dst_path>"
+        echo "Example: mv_s aeza_vps /old /new"
+        return 1
+    end
+    ssh $argv[1] "mv $argv[2] $argv[3]"
+    echo "✅ Moved $argv[2] → $argv[3] on $argv[1]"
+end
+
+# put_s — scp upload
+function put_s
+    if test (count $argv) -lt 2
+        echo "Usage: put_s <local_file> <host:remote_path>"
+        echo "Example: put_s ./file.txt aeza_vps:/root/"
+        return 1
+    end
+    scp $argv[1] $argv[2]
+end
+
+# get_s — scp download
+function get_s
+    if test (count $argv) -lt 1
+        echo "Usage: get_s <host:remote_path> [local_path]"
+        echo "Example: get_s aeza_vps:/root/file.txt ./"
+        return 1
+    end
+    if test (count $argv) -eq 1
+        scp $argv[1] ./
+    else
+        scp $argv[1] $argv[2]
+    end
+end
+# >>> ============= Remote Functions End ============ <<<
 
 function launch_script
     ll $HOME/Workspace/Tool/dotfiles/configs/
