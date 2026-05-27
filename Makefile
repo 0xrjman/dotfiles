@@ -4,7 +4,6 @@ help:
 	@echo ""
 	@echo "Main targets:"
 	@echo "  install          - Install all configurations"
-	@echo "  init             - Ensure scripts are executable"
 	@echo ""
 	@echo "Individual installation targets:"
 	@echo "  install-zsh"
@@ -22,7 +21,7 @@ help:
 	@echo "  install-aerospace"
 	@echo ""
 	@echo "Utility targets:"
-	@echo "  gitignore        - Initialize gitignore"
+	@echo "  gitignore        - Link global gitignore"
 	@echo "  setup-scripts    - Link scripts to ~/.scripts"
 
 # ==============================================================================
@@ -36,11 +35,7 @@ install: install-zsh install-nvim install-lvim install-yabai install-skhd \
 
 .PHONY: init
 init:
-	@find scripts -name '*.sh' -exec chmod +x {} +
-	@chmod +x ./lib/install.sh
-	@chmod +x ./configs/git/init.sh 2>/dev/null || true
-	@chmod +x ./configs/vim/init-nvim.sh 2>/dev/null || true
-	@chmod +x ./configs/vim/init-lvim.sh 2>/dev/null || true
+	@chmod +x lib/install.sh
 
 # ==============================================================================
 # Utility Targets
@@ -48,8 +43,9 @@ init:
 
 .PHONY: gitignore
 gitignore:
-	@echo "Initializing gitignore..."
-	@./configs/git/init.sh
+	@echo "Linking global gitignore..."
+	@ln -sf "$(PWD)/configs/git/.gitignore_global" ~/.gitignore_global
+	@git config --global core.excludesfile ~/.gitignore_global
 
 .PHONY: setup-scripts
 setup-scripts:
@@ -57,37 +53,37 @@ setup-scripts:
 	@ln -sfn "$(PWD)/scripts" ~/.scripts
 
 # ==============================================================================
-# Individual Installation Targets
+# Installation Framework
 # ==============================================================================
+#
+# lib/install.sh <name> <source_rel> <target_path> [os_specific] [post_cmd]
+#
+#   source_rel   "." = symlink entire configs/<name>/ directory
+#                "filename" = symlink configs/<name>/<filename>
+#   os_specific  "true" = OS-aware config selection (alacritty)
+#   post_cmd     Command to run after install (sketchybar restart)
 
-# Template for generating installation rules for applications.
-# Arguments:
-#   1: Application name (e.g., zsh)
-#   2: Configuration file name (e.g., .zshrc)
-#   3: Target directory (optional, defaults to ~/.config/$(1))
-#   4: OS-specific flag (optional, e.g., true)
 define install_template
 .PHONY: install-$(1)
 install-$(1): init
-	@echo "Initializing $(1)..."
-	./lib/install.sh $(1) $(2) '$(if $(3),$(3),$(HOME)/.config/$(1))' $(4)
+	@./lib/install.sh $(1) $(2) $(3) $(4) $(5)
 endef
 
-# Standard applications
-$(eval $(call install_template,yabai,.yabairc))
-$(eval $(call install_template,skhd,.skhdrc))
-$(eval $(call install_template,zellij,config.kdl))
-$(eval $(call install_template,fish,config.fish))
-$(eval $(call install_template,sketchybar,sketchybarrc))
-$(eval $(call install_template,btop,btop.conf))
-$(eval $(call install_template,aerospace,aerospace.toml))
+# --- File-mode configs (single file symlink) ---
+$(eval $(call install_template,zsh,.zshrc,$(HOME)/.zshrc))
+$(eval $(call install_template,yabai,.yabairc,$(HOME)/.yabairc))
+$(eval $(call install_template,skhd,.skhdrc,$(HOME)/.skhdrc))
+$(eval $(call install_template,cargo,config,$(HOME)/.cargo/config))
 
-# Special-case applications
-$(eval $(call install_template,zsh,.zshrc,$(HOME)))
-$(eval $(call install_template,alacritty,alacritty.yml,,true))
-$(eval $(call install_template,cargo,config,$(HOME)/.cargo))
+# --- Directory-mode configs (whole dir symlink) ---
+$(eval $(call install_template,fish,.,$(HOME)/.config/fish))
+$(eval $(call install_template,zellij,.,$(HOME)/.config/zellij))
+$(eval $(call install_template,sketchybar,.,$(HOME)/.config/sketchybar,,'brew services restart sketchybar'))
+$(eval $(call install_template,btop,.,$(HOME)/.config/btop))
+$(eval $(call install_template,aerospace,.,$(HOME)/.config/aerospace))
+$(eval $(call install_template,alacritty,.,$(HOME)/.config/alacritty,true))
 
-# Applications with custom install scripts
+# --- Custom install scripts (not using the template) ---
 .PHONY: install-nvim
 install-nvim: init
 	@echo "Initializing neovim..."
@@ -102,4 +98,4 @@ install-lvim: init
 install-yazi: init
 	@echo "Initializing yazi..."
 	@brew install yazi ffmpeg sevenzip jq poppler fd ripgrep fzf zoxide resvg imagemagick font-symbols-only-nerd-font
-	./lib/install.sh yazi yazi.toml ~/.config/yazi
+	./lib/install.sh yazi . ~/.config/yazi
