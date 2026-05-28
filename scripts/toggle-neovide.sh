@@ -75,9 +75,10 @@ WIN_SPACE=$(yabai -m query --windows --window "$WIN_ID" 2>/dev/null | jq -r '.sp
 
 if [ "$WIN_SPACE" = "$CUR_SPACE" ]; then
     # Window is on the current space → HIDE it
-    # Pick a stash space != current space (use space 1, or 2 if on space 1)
-    STASH=1
-    [ "$CUR_SPACE" = "1" ] && STASH=2
+    # Pick a stash space well outside the user's normal rotation.
+    # User has spaces 1-6; stash to 7 so it never appears when navigating.
+    STASH=7
+    [ "$CUR_SPACE" = "$STASH" ] && STASH=8
     yabai -m window "$WIN_ID" --space "$STASH"
 else
     # Window is hidden on another space → SHOW it (hotwin-style: float + center)
