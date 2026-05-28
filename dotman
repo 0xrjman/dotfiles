@@ -65,6 +65,20 @@ log_err()   { echo "${RED}✗${RESET} $*" >&2; }
 log_step()  { echo "${CYAN}→${RESET} $*"; }
 log_header(){ echo "${BOLD}${MAGENTA}$*${RESET}"; }
 
+# Resolve a path to its canonical location, following parent directory symlinks.
+# macOS readlink doesn't have -f; use realpath or a portable fallback.
+resolve_path() {
+  if command -v realpath &>/dev/null; then
+    realpath "$1"
+  else
+    # Portable fallback: resolve parent dir symlinks, then check the leaf
+    local dir="$(dirname "$1")"
+    local leaf="$(basename "$1")"
+    local resolved_dir="$(cd "$dir" 2>/dev/null && pwd -P)" || resolved_dir="$dir"
+    echo "$resolved_dir/$leaf"
+  fi
+}
+
 get_config_state() {
   local name="$1" target="$2" source_dir="$3"
   local config_path="$CONFIG_DIR/$source_dir"
@@ -90,7 +104,14 @@ get_config_state() {
       echo "broken"
     fi
   elif [[ -e "$expanded_target" ]]; then
-    echo "manual"
+    # The target itself is a regular file, but may be under a parent directory
+    # symlink (e.g. ~/.config/fish/ → configs/fish/). Resolve the canonical path.
+    local resolved="$(resolve_path "$expanded_target")"
+    if [[ "$resolved" == "$DOTFILES_DIR/configs/"* ]]; then
+      echo "linked"
+    else
+      echo "manual"
+    fi
   elif [[ "$name" == "nvim" ]]; then
     echo "lvim_bootstrap"
   else
@@ -271,6 +292,8 @@ install_one() {
   fi
 
   if command -v fzf &>/dev/null; then
+    local saved_shell="$SHELL"
+    export SHELL=/bin/bash
     local selection
     selection="$(
       for c in "${choices[@]}"; do
@@ -284,6 +307,7 @@ install_one() {
                   --preview-window=hidden \
                   --ansi
     )"
+    export SHELL="$saved_shell"
     if [[ -z "$selection" ]]; then
       echo ""
       log_info "Cancelled."
@@ -351,6 +375,8 @@ fix_one() {
   fi
 
   if command -v fzf &>/dev/null; then
+    local saved_shell="$SHELL"
+    export SHELL=/bin/bash
     local selection
     selection="$(
       for c in "${broken_list[@]}"; do
@@ -360,6 +386,7 @@ fix_one() {
       done | fzf --prompt="Select config to fix: " \
                   --height=10 --ansi
     )"
+    export SHELL="$saved_shell"
     [[ -z "$selection" ]] && { log_info "Cancelled."; read -rp "${DIM}Press Enter...${RESET}"; return; }
     local sel_name
     sel_name="$(echo "$selection" | awk '{print $2}')"
@@ -433,6 +460,10 @@ view_config() {
     return
   fi
 
+  # Force bash for fzf preview commands
+  local saved_shell="$SHELL"
+  export SHELL=/bin/bash
+
   local selection
   selection="$(
     for entry in "${CONFIGS[@]}"; do
@@ -474,6 +505,8 @@ view_config() {
                --ansi
   )"
 
+  export SHELL="$saved_shell"
+
   echo ""
   read -rp "${DIM}Press Enter to continue...${RESET}"
 }
@@ -489,6 +522,11 @@ browse_configs() {
   echo ""
   log_info "Navigate with ↑↓, preview on the right, Enter to see details."
   echo ""
+
+  # Force bash for fzf preview commands, otherwise fish users get
+  # "unsupported use of '='" errors because fish doesn't use bash syntax.
+  local saved_shell="$SHELL"
+  export SHELL=/bin/bash
 
   local selection
   selection="$(
@@ -533,6 +571,9 @@ browse_configs() {
                --ansi \
                --bind 'enter:execute(echo {} | awk -F"|" "{print \$2}" | xargs echo)+abort'
   )" || true
+
+  # Restore original SHELL
+  export SHELL="$saved_shell"
 
   if [[ -n "$selection" ]]; then
     clear
