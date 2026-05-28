@@ -26,7 +26,6 @@ CONFIGS=(
   "alacritty:Terminal:~/.config/alacritty:alacritty:make install-alacritty"
   "zellij:Terminal:~/.config/zellij/config.kdl:zellij:make install-zellij"
   "lvim:Editor:~/.config/lvim:vim/lvim:make install-lvim"
-  "nvim:Editor:~/.config/nvim:vim/nvim:make install-nvim"
   "yabai:Window:~/.yabairc:yabai:make install-yabai"
   "skhd:Window:~/.skhdrc:skhd:make install-skhd"
   "aerospace:Window:~/.config/aerospace:aerospace:make install-aerospace"
