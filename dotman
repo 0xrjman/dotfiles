@@ -3,7 +3,7 @@
 # dotman — Dotfiles Config Manager TUI
 # ======================================
 # Interactive terminal UI for managing dotfiles configurations.
-# Requires: bash 4+, fzf, make
+# Requires: bash 3.2+, fzf, make
 #
 
 set -euo pipefail
@@ -159,13 +159,18 @@ show_dashboard() {
 
   # ── Compute states ──
   local total=0 linked=0 broken=0 missing=0 manual=0 external=0 boot=0
-  declare -A STATES
-
+  local _state_names=""
+  local _state_values=""
   for entry in "${CONFIGS[@]}"; do
     local name target source_dir
     IFS=':' read -r name _ target source_dir _ <<< "$entry"
-    STATES[$name]="$(get_config_state "$name" "$target" "$source_dir")"
-    case "${STATES[$name]}" in
+    local st
+    st="$(get_config_state "$name" "$target" "$source_dir")"
+    _state_names="$name
+$_state_names"
+    _state_values="$st
+$_state_values"
+    case "$st" in
       linked)         ((linked++)) ;;
       lvim_bootstrap) ((boot++)) ;;
       external)       ((external++)) ;;
@@ -191,7 +196,18 @@ show_dashboard() {
   for entry in "${CONFIGS[@]}"; do
     local name cat target source_dir cmd
     IFS=':' read -r name cat target source_dir cmd <<< "$entry"
-    local state="${STATES[$name]}"
+        local state=""
+    # bash 3.2 lookup: linear search through parallel arrays
+    _idx=0
+    while IFS= read -r _ln; do
+      [ -z "$_ln" ] && continue
+      if [ "$_ln" = "$name" ]; then
+        state="$(echo "$_state_values" | sed -n "$((_idx+1))p")"
+        break
+      fi
+      ((_idx++))
+    done <<< "$_state_names"
+
     local icon="$(get_state_icon "$state")"
 
     if [[ "$cat" != "$current_cat" ]]; then
@@ -328,20 +344,20 @@ install_one() {
   else
     echo "Select a config to install:"
     local i=1
-    declare -A MENU_MAP
+    local _menu_names=()
     for c in "${choices[@]}"; do
       local name target state
       IFS='|' read -r name target state <<< "$c"
       local icon="$(get_state_icon "$state")"
       printf "  ${BOLD}%2d${RESET}) %s %-14s ${DIM}%s${RESET}\n" "$i" "$icon" "$name" "$target"
-      MENU_MAP[$i]="$name"
+      _menu_names+=("$name")
       ((i++))
     done
     echo "  0) Cancel"
     echo ""
     read -rp "Choice [0-$((${#choices[@]}))]: " choice
     if [[ "$choice" =~ ^[0-9]+$ ]] && [[ "$choice" -gt 0 ]] && [[ "$choice" -le ${#choices[@]} ]]; then
-      local sel_name="${MENU_MAP[$choice]}"
+      local sel_name="${_menu_names[$((choice-1))]}"
       log_step "Installing $sel_name..."
       cd "$DOTFILES_DIR"
       if make "install-$sel_name" 2>&1; then
@@ -396,18 +412,18 @@ fix_one() {
   else
     echo "Broken configs:"
     local i=1
-    declare -A BROKEN_MAP
+    local _broken_names=()
     for c in "${broken_list[@]}"; do
       local name target
       IFS='|' read -r name target <<< "$c"
       printf "  %d) %s -> %s\n" "$i" "$name" "$target"
-      BROKEN_MAP[$i]="$name"
+      _broken_names+=("$name")
       ((i++))
     done
     echo "  0) Cancel"
     read -rp "Choice: " choice
     if [[ "$choice" =~ ^[0-9]+$ ]] && [[ "$choice" -gt 0 ]] && [[ "$choice" -le ${#broken_list[@]} ]]; then
-      local sel_name="${BROKEN_MAP[$choice]}"
+      local sel_name="${_broken_names[$((choice-1))]}"
       log_step "Reinstalling $sel_name..."
       cd "$DOTFILES_DIR"
       make "install-$sel_name" 2>&1 && log_ok "$sel_name fixed." || log_err "Failed."
@@ -632,19 +648,19 @@ show_scripts() {
     fi
 
     local i=1
-    declare -A SCRIPT_MAP
+    local _script_paths=()
     for script in "${scripts[@]}"; do
       local base="$(basename "$script")"
       local perms="$(stat -f "%p" "$script" 2>/dev/null | tail -c 4)"
       printf "  ${BOLD}%2d${RESET}) %-24s  ${DIM}[%s]${RESET}\n" "$i" "$base" "$perms"
-      SCRIPT_MAP[$i]="$script"
+      _script_paths+=("$script")
       ((i++))
     done
     echo "  0) Back"
     echo ""
     read -rp "Select script to view/run [0-$((${#scripts[@]}))]: " choice
     if [[ "$choice" =~ ^[0-9]+$ ]] && [[ "$choice" -gt 0 ]] && [[ "$choice" -le ${#scripts[@]} ]]; then
-      local script_path="${SCRIPT_MAP[$choice]}"
+      local script_path="${_script_paths[$((choice-1))]}"
       local base="$(basename "$script_path")"
       echo ""
       log_info "Contents of ${BOLD}$base${RESET}:"
