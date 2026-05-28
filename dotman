@@ -559,7 +559,7 @@ browse_configs() {
                --preview "
                  raw=\$(echo {} | awk -F'|' '{print \$1}');
                  name=\$(echo \"\$raw\" | awk '{print \$2}');
-                 srcdir=\$(echo {} | awk -F'|' '{print \$4}');
+                 srcdir=\$(echo {} | awk -F'|' '{print \$3}');
                  dir='$CONFIG_DIR/\$srcdir';
                  echo \"${BOLD}Config: \$name${RESET}\";
                  echo \"${DIM}Source: \$dir${RESET}\";
