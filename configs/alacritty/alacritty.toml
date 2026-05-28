@@ -50,12 +50,18 @@ option_as_alt = "Both"       # [Optimization] Make Option keys behave as Alt for
 x = 10
 y = 12
 
-[window.dimensions]
-columns = 140
-lines = 38
-
-[window.position]
-x = 100
+# [window.dimensions] — COMMENTED OUT: toggle-alacritty.sh handles window
+# geometry via yabai --move/--resize (90% x 95% centered).  Setting dimensions
+# here causes conflict: first-launch uses Alacritty's own sizing while
+# subsequent toggles use the script's positioning, leading to inconsistent
+# window sizes.
+#
+# [window.dimensions]
+# columns = 140
+# lines = 38
+#
+# [window.position]
+# x = 100
 
 # -----------------------------------------------------------------------------
 # Color Configuration (Colors)

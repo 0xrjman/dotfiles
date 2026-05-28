@@ -62,11 +62,39 @@ yabai -m rule --add app="^System Settings$" manage=off
 yabai -m rule --add app="^OpenAI Translator$" manage=off
 yabai -m rule --add app="^NetEaseMusic$" manage=off
 
-# ===== Float rules with self-managed opacity ======
-# Neovide: let neovide_config.lua control opacity via neovide_opacity
-yabai -m rule --add app="^neovide$" manage=off opacity=1.0
-# Alacritty: let alacritty.toml control opacity
-yabai -m rule --add app="^Alacritty$" manage=off opacity=1.0
+# ===== App → Space auto-routing ======
+# zen → space 2
+yabai -m rule --add app="^zen$" space=2
+# Zed: first window handled by signal below (space 5), subsequent→space 6
+# (no static rule for zed, uses event signal instead)
+# WPS / Notion / Obsidian → space 4
+yabai -m rule --add app="^wpsoffice$" space=4
+yabai -m rule --add app="^Notion$" space=4
+yabai -m rule --add app="^Obsidian$" space=4
+# WeChat / LX Music → space 3
+yabai -m rule --add app="^WeChat$" space=3
+yabai -m rule --add app="^lx-music-desktop$" space=3
+
+# ===== Signal: Zed multi-window routing ======
+# First Zed → space 5, second+ → space 6
+yabai -m signal --add event=window_created action="$HOME/bin/route-zed-window.sh"
+
+# ===== Signal: lx-music-desktop → space 3 ======
+# Catches new window creation and existing windows when app comes to front
+yabai -m signal --add event=window_created action="$HOME/bin/route-lxmusic-window.sh"
+yabai -m signal --add event=application_front_switched action="$HOME/bin/route-lxmusic-window.sh"
+
+# ===== manage=on rules (opacity=1.0 to avoid double-stacking) ======
+# Clean up any stale runtime rules from prior sessions first
+# (see pit #22: yabai -m rule --add at runtime persists in memory)
+yabai -m rule --remove "^neovide$" 2>/dev/null
+yabai -m rule --remove "^Alacritty$" 2>/dev/null
+# Neovide: manage=on required for yabai toggle; auto-floated by toggle script
+# opacity=1.0 so neovide_opacity controls transparency alone
+yabai -m rule --add app="^neovide$" opacity=1.0
+# Alacritty: manage=on required for yabai toggle; auto-floated by toggle script
+# opacity=1.0 so alacritty.toml opacity controls transparency alone
+yabai -m rule --add app="^Alacritty$" opacity=1.0
 
 # Start JankyBorders (window borders via Quartz, not SA-dependent)
 borders active_color=0xff775759 inactive_color=0xff555555 width=6.0 style=round &

@@ -13,7 +13,7 @@ function M.setup()
         vim.g.neovide_opacity = 0.85
         vim.g.neovide_fullscreen = false
         vim.g.neovide_window_blurred = true
-        vim.g.neovide_remember_window_size = true
+        vim.g.neovide_remember_window_size = false
 
         -- Cursor effect: railgun
         vim.g.neovide_cursor_vfx_mode = 'railgun'

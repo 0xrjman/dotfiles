@@ -5,12 +5,15 @@
 # >>> ===================================== <<<
 # >>> ========== 0. General Start ========= <<<
 # >>> ===================================== <<<
-set -gx FISH_HOME /bin/fish
+# FISH_HOME set per-OS below (Mac section uses /opt/homebrew/bin/fish)
 set -x PATH $PATH $HOME/.local/bin
-set -x PATH $PATH /opt/homebrew/Cellar/llvm/19.1.3/bin
+# LLVM: dynamically resolved via brew --prefix to avoid version hardcoding
+if test -d (brew --prefix llvm 2>/dev/null)/bin
+    set -x PATH $PATH (brew --prefix llvm)/bin
+end
 set -x PATH $PATH ~/.bun/bin
 
-set -U fish_key_bindings fish_vi_key_bindings
+set -g fish_key_bindings fish_vi_key_bindings
 
 alias ls "exa"
 alias ll "exa -alh"
