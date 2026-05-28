@@ -101,14 +101,15 @@ borders active_color=0xff775759 inactive_color=0xff555555 width=6.0 style=round 
 
 yabai -m rule --apply
 
-# ===== Auto-create 6 spaces =====
-for idx in 1 2 3 4 5 6; do
+# ===== Auto-create spaces 1-7 =====
+# Space 7 is used as stash space for toggle scripts (Alacritty/Neovide)
+for idx in 1 2 3 4 5 6 7; do
     yabai -m query --space "$idx" >/dev/null 2>&1 || yabai -m space --create
 done
 
-# Delete extra spaces beyond 6
+# Delete extra spaces beyond 7
 for idx in $(yabai -m query --spaces | jq -r '.[].index' | sort -nr); do
-    [ "$idx" -gt 6 ] && yabai -m space --destroy "$idx"
+    [ "$idx" -gt 7 ] && yabai -m space --destroy "$idx"
 done
 
 echo "yabai configuration loaded.."

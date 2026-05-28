@@ -64,15 +64,15 @@ function git_proxy_off
 end
 
 function proxy_on
-        export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
-        export http_proxy="http://127.0.0.1:7890"
-        export https_proxy=$http_proxy
-        export ftp_proxy=$http_proxy
-        export rsync_proxy=$http_proxy
-        export HTTP_PROXY=$http_proxy
-        export HTTPS_PROXY=$http_proxy
-        export FTP_PROXY=$http_proxy
-        export RSYNC_PROXY=$http_proxy
+    set -gx no_proxy "localhost,127.0.0.1,localaddress,.localdomain.com"
+    set -gx http_proxy "http://127.0.0.1:7890"
+    set -gx https_proxy $http_proxy
+    set -gx ftp_proxy $http_proxy
+    set -gx rsync_proxy $http_proxy
+    set -gx HTTP_PROXY $http_proxy
+    set -gx HTTPS_PROXY $http_proxy
+    set -gx FTP_PROXY $http_proxy
+    set -gx RSYNC_PROXY $http_proxy
         git_proxy_on
         echo -e "已开启代理"
         curl cip.cc
